@@ -26,12 +26,15 @@
     }
 
     [search-container] ion-input{
-
         background: #fff;
         margin:auto;
         width: 90%;
         border: 2px solid green;
         margin-top: 10px;
+    }
+
+    [search-container] ion-input input{
+        padding: 5px 0;
     }
  
 }

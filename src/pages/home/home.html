@@ -7,20 +7,20 @@
 </ion-fab>
 
   <ion-fab right bottom>
-    <button ion-fab color="light" (click)="addMarker()"><ion-icon name="locate"></ion-icon></button>
+    <button ion-fab color="light" (click)="myLocation()"><ion-icon name="locate"></ion-icon></button>
   </ion-fab>
 
 
 <div search-container>
 
 <div> 
-  <ion-input type="text" [value]="pickup" [(ngModel)]="pickup" placeholder="Pick up location">
+  <ion-input type="text" id="pickup" #places [value]="pickup" [(ngModel)]="pickup" placeholder="Pick up location">
   </ion-input>
   <!-- <ion-icon name="pin"></ion-icon> -->
 </div>
 
 <div>
-  <ion-input type="text" [value]="dropoff" [(ngModel)]="dropoff" placeholder="Drop off by City"></ion-input>
+  <ion-input type="text" id="dropoff" [value]="dropoff" [(ngModel)]="dropoff" placeholder="Drop off location"></ion-input>
   <!-- <ion-icon name="pin"></ion-icon> -->
 </div>
 </div>
