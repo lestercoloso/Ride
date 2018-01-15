@@ -3,7 +3,7 @@ import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 
 import { MyApp } from './app.component';
-import { HomePage } from '../pages/home/home';
+import { HomePage, SearchPage } from '../pages/home/home';
 import { ListPage } from '../pages/list/list';
 
 import { Geolocation } from '@ionic-native/geolocation';
@@ -16,7 +16,8 @@ import { HttpModule } from '@angular/http';
   declarations: [
     MyApp,
     HomePage,
-    ListPage
+    ListPage,
+    SearchPage
   ],
   imports: [
     BrowserModule,
@@ -27,7 +28,8 @@ import { HttpModule } from '@angular/http';
   entryComponents: [
     MyApp,
     HomePage,
-    ListPage
+    ListPage,
+    SearchPage
   ],
   providers: [
     StatusBar,

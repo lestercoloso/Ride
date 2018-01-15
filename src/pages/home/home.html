@@ -14,7 +14,7 @@
 <div search-container>
 
 <div> 
-  <ion-input type="text" id="pickup" #places [value]="pickup" [(ngModel)]="pickup" placeholder="Pick up location">
+  <ion-input type="text" (click)="openSearch(mylat, mylng)" id="pickup" #places [value]="pickup" [(ngModel)]="pickup" placeholder="Pick up location" >
   </ion-input>
   <!-- <ion-icon name="pin"></ion-icon> -->
 </div>
