@@ -1,5 +1,5 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
-import { NavController, ModalController, NavParams} from 'ionic-angular';
+import { Component, ViewChild, ElementRef, NgZone } from '@angular/core';
+import { NavController, ModalController, NavParams, ViewController} from 'ionic-angular';
 import { Geolocation } from '@ionic-native/geolocation';
 import { Http, Response, Headers, RequestOptions, URLSearchParams } from '@angular/http'; 
  
@@ -137,20 +137,78 @@ export class HomePage {
   templateUrl: 'search.html'
 })
 export class SearchPage{
- items: Array<{item:string}>;
- key: any;
- mylng: any;
- mylat: any;
+  autocompleteItems;
+  autocomplete;
+  latitude: number = 0;
+  longitude: number = 0;
+  geo: any;
+
+service = new google.maps.places.AutocompleteService();
+
  constructor(
- 	params: NavParams,
-    public http: Http
+ 	  public params: NavParams,
+    public http: Http,
+    public viewCtrl: ViewController, 
+    private zone: NgZone
  	) {
 
- 	this.mylng = params.get('lng');
- 	this.mylat = params.get('lat');
+    this.autocompleteItems = [];
+    this.autocomplete = {
+      query: ''
+    };
 
- 	console.log(this.mylng);
+ 	// this.longitude = params.get('lng');
+ 	// this.latitude = params.get('lat');
+
+
+      // let script = document.createElement("script");
+      // script.id = "googleMaps";
+
+      // let apiKey = 'AIzaSyA9f8YjPIgwAr-ZIscN1nTMmGUZsDsHbTQ';
+      // script.src = 'https://maps.googleapis.com/maps/api/js?key='+apiKey+'&libraries=places&callback=initAutocomplete';
+      
+      // document.body.appendChild(script);  
+
  }
+
+
+ dismiss() {
+    this.viewCtrl.dismiss();
+  }
+
+  chooseItem(item: any) {
+    this.viewCtrl.dismiss(item);
+    this.geo = item;
+    this.geoCode(this.geo);//convert Address to lat and long
+  }
+
+
+  updateSearch() {
+    if (this.autocomplete.query == '') {
+      this.autocompleteItems = [];
+      return;
+    }
+    let me = this;
+    this.service.getPlacePredictions({ input: this.autocomplete.query,  componentRestrictions: {country: 'PH'} }, function (predictions, status) {
+      me.autocompleteItems = []; 
+      me.zone.run(function () {
+        predictions.forEach(function (prediction) {
+          me.autocompleteItems.push(prediction.description);
+        });
+      });
+    });
+  }
+
+  //convert Address string to lat and long
+  geoCode(address:any) {
+    let geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ 'address': address }, (results, status) => {
+    this.latitude = results[0].geometry.location.lat();
+    this.longitude = results[0].geometry.location.lng();
+    alert("lat: " + this.latitude + ", long: " + this.longitude);
+   });
+ }
+
 
 
 	getSearch(test){
@@ -158,22 +216,24 @@ export class SearchPage{
 	}
 
 
-	SearchAddress(key){
-		console.log('https://maps.googleapis.com/maps/api/place/nearbysearch/json?location='+this.mylat+', '+this.mylng+'&radius=100&type=place&keyword='+this.key+'&key=AIzaSyArxGIDm4Ksf4GAuzpoG7xyLP1VTLiynmc');
-	    this.http.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json?location='+this.mylat+', '+this.mylng+'&radius=500&keyword='+this.key+'&key=AIzaSyArxGIDm4Ksf4GAuzpoG7xyLP1VTLiynmc', { }).subscribe(data => {
-	       let result =  data.json();
-	       if(result.status=="OK"){
-				for(let address of result.results) {
-					console.log(address.vicinity);
-				}
-	       }else{
-	       	alert("No Results found.");
-	       }
-	      console.log(result);
-	    }, error => {
-	        alert('Unable to get the address');
-	    });  
+	// updateSearch(key){
+	//    this.http.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json?location='+this.latitude+', '+this.longitude+'&radius=1000&keyword='+this.key+'&key=AIzaSyArxGIDm4Ksf4GAuzpoG7xyLP1VTLiynmc', { }).subscribe(data => {
+	//        let result =  data.json();
+	//        if(result.status=="OK"){
+	// 			for(let address of result.results) {
+	// 				console.log(address.vicinity);
+	// 			}
+	//        }else{
+	//        	alert("No Results found.");
+	//        }
+	//       console.log(result);
+	//     }, error => {
+	//         alert('Unable to get the address');
+	//     });  
 
-	}
+	// }
+
+
+
 
 }
