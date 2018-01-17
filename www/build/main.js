@@ -34,16 +34,17 @@ webpackEmptyAsyncContext.id = 151;
 
 /***/ }),
 
-/***/ 194:
+/***/ 191:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return HomePage; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return SearchPage; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MyApp; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__ = __webpack_require__(195);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_http__ = __webpack_require__(196);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__ = __webpack_require__(192);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__ = __webpack_require__(194);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__pages_home_home__ = __webpack_require__(195);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__pages_list_list__ = __webpack_require__(198);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -57,20 +58,123 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
+
+var MyApp = (function () {
+    function MyApp(platform, statusBar, splashScreen) {
+        this.platform = platform;
+        this.statusBar = statusBar;
+        this.splashScreen = splashScreen;
+        this.rootPage = __WEBPACK_IMPORTED_MODULE_4__pages_home_home__["a" /* HomePage */];
+        this.pickup = [];
+        this.dropoff = [];
+        this.initializeApp();
+        // used for an example of ngFor and navigation
+        this.pages = [
+            { icon: 'fa-credit-card-alt', title: 'Credits', component: __WEBPACK_IMPORTED_MODULE_4__pages_home_home__["a" /* HomePage */] },
+            { icon: 'fa-ticket', title: 'Promotions', component: __WEBPACK_IMPORTED_MODULE_5__pages_list_list__["a" /* ListPage */] },
+            { icon: 'fa-car', title: 'My trips', component: __WEBPACK_IMPORTED_MODULE_4__pages_home_home__["b" /* SearchPage */] },
+            { icon: 'fa-info-circle', title: 'Help', component: __WEBPACK_IMPORTED_MODULE_5__pages_list_list__["a" /* ListPage */] },
+            { icon: 'fa-sign-out', title: 'Log out', component: __WEBPACK_IMPORTED_MODULE_5__pages_list_list__["a" /* ListPage */] }
+        ];
+    }
+    MyApp.prototype.initializeApp = function () {
+        var _this = this;
+        this.platform.ready().then(function () {
+            // Okay, so the platform is ready and our plugins are available.
+            // Here you can do any higher level native things you might need.
+            _this.statusBar.styleDefault();
+            _this.splashScreen.hide();
+            _this.pickup.address = '';
+            _this.pickup.lat = '';
+            _this.pickup.lng = '';
+            _this.dropoff.address = '';
+            _this.dropoff.lat = '';
+            _this.dropoff.lng = '';
+        });
+    };
+    MyApp.prototype.changeAddress = function (type, address, lat, lng) {
+        if (type == "pickup") {
+            this.pickup.address = address;
+            this.pickup.lat = lat;
+            this.pickup.lng = lng;
+        }
+        else {
+            this.dropoff.address = address;
+            this.dropoff.lat = lat;
+            this.dropoff.lng = lng;
+        }
+    };
+    MyApp.prototype.openPage = function (page) {
+        // Reset the content nav to have just this page
+        // we wouldn't want the back button to show in this scenario
+        this.nav.setRoot(page.component);
+    };
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_8" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* Nav */]),
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* Nav */])
+    ], MyApp.prototype, "nav", void 0);
+    MyApp = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({template:/*ion-inline-start:"/Users/lester.coloso/Documents/mobile/Ride/src/app/app.html"*/'<ion-menu [content]="content">\n  <ion-header user-container>\n    \n    <div user-pic-container>\n      <div></div>\n    </div>\n    <div user-name>Test User</div>\n\n  </ion-header>\n\n  <ion-content>\n    <ion-list>\n      <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)" pages>\n        <i class="fa {{p.icon}}" aria-hidden="true"></i>\n        {{p.title}}\n      </button>\n    </ion-list>\n  </ion-content>\n\n</ion-menu>\n\n<!-- Disable swipe-to-go-back because it\'s poor UX to combine STGB with side menus -->\n<ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>'/*ion-inline-end:"/Users/lester.coloso/Documents/mobile/Ride/src/app/app.html"*/
+        }),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* Platform */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__["a" /* StatusBar */], __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__["a" /* SplashScreen */]])
+    ], MyApp);
+    return MyApp;
+}());
+
+//# sourceMappingURL=app.component.js.map
+
+/***/ }),
+
+/***/ 195:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return HomePage; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return SearchPage; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__ = __webpack_require__(196);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_http__ = __webpack_require__(197);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__app_app_component__ = __webpack_require__(191);
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+
+
 var HomePage = (function () {
-    function HomePage(navCtrl, geolocation, http, modalCtrl) {
+    function HomePage(navCtrl, geolocation, http, modalCtrl, inj) {
         this.navCtrl = navCtrl;
         this.geolocation = geolocation;
         this.http = http;
         this.modalCtrl = modalCtrl;
+        this.inj = inj;
         this.mylocation = [];
         this.usericon = "assets/icon/man.png";
+        this.MainApp = this.inj.get(__WEBPACK_IMPORTED_MODULE_4__app_app_component__["a" /* MyApp */]);
     }
     HomePage.prototype.ionViewDidLoad = function () {
         this.loadMap();
     };
-    HomePage.prototype.openSearch = function (lat, lng) {
-        var searchModal = this.modalCtrl.create(SearchPage, { lat: lat, lng: lng });
+    HomePage.prototype.openSearch = function (type) {
+        var _this = this;
+        var searchModal = this.modalCtrl.create(SearchPage, { type: type });
+        searchModal.onDidDismiss(function (data) {
+            var type = data.type;
+            var address = data.location.address;
+            var lat = data.location.lat;
+            var lng = data.location.lng;
+            _this.MainApp.changeAddress(type, address, lat, lng);
+        });
         searchModal.present();
     };
     HomePage.prototype.loadMap = function () {
@@ -79,21 +183,17 @@ var HomePage = (function () {
             var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
             _this.mylat = position.coords.latitude;
             _this.mylng = position.coords.longitude;
+            _this.MainApp.centerlat = position.coords.latitude;
+            _this.MainApp.centerlng = position.coords.longitude;
             var mapOptions = {
                 center: latLng,
+                icon: _this.usericon,
                 zoom: 16,
                 mapTypeId: 'roadmap'
             };
             _this.getAddress(position.coords.latitude, position.coords.longitude);
             _this.map = new google.maps.Map(_this.mapElement.nativeElement, mapOptions);
-            var autocomplete = new google.maps.places.Autocomplete(_this.places.nativeElement);
-            google.maps.event.addListener(autocomplete, 'place_changed', function () {
-                var place = autocomplete.getPlace();
-                var latitude = place.geometry.location.lat();
-                var longitude = place.geometry.location.lng();
-                alert(latitude + ", " + longitude);
-                console.log(place);
-            });
+            _this.myLocation();
         }, function (err) {
             console.log(err);
         });
@@ -102,17 +202,19 @@ var HomePage = (function () {
         var _this = this;
         this.http.get('http://maps.googleapis.com/maps/api/geocode/json?latlng=' + lt + ',' + lng + '&sensor=true/false', {}).subscribe(function (data) {
             var result = data.json();
-            _this.pickup = result.results[0].formatted_address;
+            if (result.results[0]) {
+                _this.MainApp.pickup.address = result.results[0].formatted_address;
+            }
         }, function (error) {
             alert('Unable to get the address');
         });
     };
     HomePage.prototype.myLocation = function () {
-        var center = new google.maps.LatLng(this.mylat, this.mylng);
+        var center = new google.maps.LatLng(this.MainApp.centerlat, this.MainApp.centerlng);
         this.map.panTo(center);
         var marker = new google.maps.Marker({
             map: this.map,
-            animation: google.maps.Animation.DROP,
+            // animation: google.maps.Animation.DROP,
             icon: this.usericon,
             zoom: 18,
             position: this.map.getCenter()
@@ -133,6 +235,23 @@ var HomePage = (function () {
         infoWindow.open(this.map, marker);
         //  });
     };
+    HomePage.prototype.startNavigating = function () {
+        // let directionsService = new google.maps.DirectionsService;
+        // let directionsDisplay = new google.maps.DirectionsRenderer;
+        // directionsDisplay.setMap(this.map);
+        // directionsDisplay.setPanel(this.directionsPanel.nativeElement);
+        // directionsService.route({
+        //     origin: 'adelaide',
+        //     destination: 'adelaide oval',
+        //     travelMode: google.maps.TravelMode['DRIVING']
+        // }, (res, status) => {
+        //     if(status == google.maps.DirectionsStatus.OK){
+        //         directionsDisplay.setDirections(res);
+        //     } else {
+        //         console.warn(status);
+        //     }
+        // });
+    };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_8" /* ViewChild */])('map'),
         __metadata("design:type", typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["t" /* ElementRef */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["t" /* ElementRef */]) === "function" && _a || Object)
@@ -143,42 +262,39 @@ var HomePage = (function () {
     ], HomePage.prototype, "places", void 0);
     HomePage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'home-page',template:/*ion-inline-start:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/home/home.html"*/'\n\n<ion-content>\n\n<ion-fab top left green>\n    <button ion-fab mini menuToggle><ion-icon name="menu"></ion-icon></button>\n</ion-fab>\n\n  <ion-fab right bottom green>\n    <button ion-fab color="light" (click)="myLocation()"><ion-icon name="locate"></ion-icon></button>\n  </ion-fab>\n\n\n<div search-container>\n\n<div> \n  <ion-input type="text" (click)="openSearch(mylat, mylng)" id="pickup" #places [value]="pickup" [(ngModel)]="pickup" placeholder="Pick up location" >\n  </ion-input>\n  <!-- <ion-icon name="pin"></ion-icon> -->\n</div>\n\n<div>\n  <ion-input type="text" id="dropoff" [value]="dropoff" [(ngModel)]="dropoff" placeholder="Drop off location"></ion-input>\n  <!-- <ion-icon name="pin"></ion-icon> -->\n</div>\n</div>\n\n\n\n\n<div #map id="map"></div> \n\n\n \n</ion-content>\n'/*ion-inline-end:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/home/home.html"*/
+            selector: 'home-page',template:/*ion-inline-start:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/home/home.html"*/'\n\n<ion-content>\n\n<ion-fab top left green>\n    <button ion-fab mini menuToggle><ion-icon name="menu"></ion-icon></button>\n</ion-fab>\n\n  <ion-fab right bottom green>\n    <button ion-fab color="light" (click)="myLocation()"><ion-icon name="locate"></ion-icon></button>\n  </ion-fab>\n\n\n<div search-container>\n\n<div> \n  <ion-input type="text" (click)="openSearch(\'pickup\')" id="pickup" #places [value]="MainApp.pickup.address" [(ngModel)]="MainApp.pickup.address" placeholder="Pick up location" >\n  </ion-input>\n  <!-- <ion-icon name="pin"></ion-icon> -->\n</div>\n\n<div>\n  <ion-input type="text" (click)="openSearch(\'dropoff\')" id="dropoff" [value]="MainApp.dropoff.address" [(ngModel)]="MainApp.dropoff.address" placeholder="Drop off location"></ion-input>\n  <!-- <ion-icon name="pin"></ion-icon> -->\n</div>\n</div>\n\n\n\n\n<div #map id="map"></div> \n\n\n \n</ion-content>\n'/*ion-inline-end:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/home/home.html"*/
         }),
-        __metadata("design:paramtypes", [typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* NavController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* NavController */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__["a" /* Geolocation */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__["a" /* Geolocation */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["d" /* ModalController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["d" /* ModalController */]) === "function" && _f || Object])
+        __metadata("design:paramtypes", [typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* NavController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* NavController */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__["a" /* Geolocation */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__["a" /* Geolocation */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["d" /* ModalController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["d" /* ModalController */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injector */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injector */]) === "function" && _g || Object])
     ], HomePage);
     return HomePage;
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c, _d, _e, _f, _g;
 }());
 
 var SearchPage = (function () {
-    function SearchPage(params, http, viewCtrl, zone) {
+    function SearchPage(params, http, viewCtrl, zone, inj) {
         this.params = params;
         this.http = http;
         this.viewCtrl = viewCtrl;
         this.zone = zone;
+        this.inj = inj;
         this.latitude = 0;
         this.longitude = 0;
+        this.location_data = [];
         this.service = new google.maps.places.AutocompleteService();
+        this.MainApp = this.inj.get(__WEBPACK_IMPORTED_MODULE_4__app_app_component__["a" /* MyApp */]);
         this.autocompleteItems = [];
         this.autocomplete = {
             query: ''
         };
-        // this.longitude = params.get('lng');
-        // this.latitude = params.get('lat');
-        // let script = document.createElement("script");
-        // script.id = "googleMaps";
-        // let apiKey = 'AIzaSyA9f8YjPIgwAr-ZIscN1nTMmGUZsDsHbTQ';
-        // script.src = 'https://maps.googleapis.com/maps/api/js?key='+apiKey+'&libraries=places&callback=initAutocomplete';
-        // document.body.appendChild(script);  
+        this.type = params.get('type');
     }
     SearchPage.prototype.dismiss = function () {
         this.viewCtrl.dismiss();
     };
     SearchPage.prototype.chooseItem = function (item) {
-        this.viewCtrl.dismiss(item);
         this.geo = item;
         this.geoCode(this.geo); //convert Address to lat and long
+        this.viewCtrl.dismiss({ type: this.type, location: this.location_data });
     };
     SearchPage.prototype.updateSearch = function () {
         if (this.autocomplete.query == '') {
@@ -189,9 +305,11 @@ var SearchPage = (function () {
         this.service.getPlacePredictions({ input: this.autocomplete.query, componentRestrictions: { country: 'PH' } }, function (predictions, status) {
             me.autocompleteItems = [];
             me.zone.run(function () {
-                predictions.forEach(function (prediction) {
-                    me.autocompleteItems.push(prediction.description);
-                });
+                if (predictions) {
+                    predictions.forEach(function (prediction) {
+                        me.autocompleteItems.push(prediction.description);
+                    });
+                }
             });
         });
     };
@@ -200,9 +318,12 @@ var SearchPage = (function () {
         var _this = this;
         var geocoder = new google.maps.Geocoder();
         geocoder.geocode({ 'address': address }, function (results, status) {
-            _this.latitude = results[0].geometry.location.lat();
-            _this.longitude = results[0].geometry.location.lng();
-            alert("lat: " + _this.latitude + ", long: " + _this.longitude);
+            // this.longitude = 12232;
+            _this.location_data.address = results[0].formatted_address;
+            _this.location_data.lat = results[0].geometry.location.lat();
+            _this.location_data.lng = results[0].geometry.location.lng();
+            // this.MainApp.changeAddress('test','hellos');
+            // this.MainApp.changeAddress(this.type, results[0].formatted_address, results[0].geometry.location.lat(), results[0].geometry.location.lng());
         });
     };
     SearchPage.prototype.getSearch = function (test) {
@@ -210,19 +331,19 @@ var SearchPage = (function () {
     };
     SearchPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'search-page',template:/*ion-inline-start:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/home/search.html"*/'<ion-header>\n  <ion-toolbar>\n    <ion-title>Enter address</ion-title>\n    <ion-searchbar [(ngModel)]="autocomplete.query" [showCancelButton]="true"   (ionInput)="updateSearch()" (ionCancel)="dismiss()"></ion-searchbar>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content>\n  <ion-list>\n    <ion-item *ngFor="let item of autocompleteItems" tappable   (click)="chooseItem(item)">\n      {{ item }}\n    </ion-item>\n  </ion-list>\n</ion-content>'/*ion-inline-end:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/home/search.html"*/
+            selector: 'search-page',template:/*ion-inline-start:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/home/search.html"*/'<ion-header>\n  <ion-toolbar>\n    <ion-searchbar (click)="MainApp.changeAddress(\'test\',\'hellos\')" [(ngModel)]="autocomplete.query" [showCancelButton]="true" (ionInput)="updateSearch()" (ionCancel)="dismiss()"></ion-searchbar>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content>\n  <ion-list>\n    <ion-item *ngFor="let item of autocompleteItems" tappable   (click)="chooseItem(item)">\n      {{ item }}\n    </ion-item>\n  </ion-list>\n</ion-content>'/*ion-inline-end:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/home/search.html"*/
         }),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavParams */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavParams */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* ViewController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* ViewController */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* NgZone */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* NgZone */]) === "function" && _d || Object])
+        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavParams */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavParams */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* ViewController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* ViewController */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* NgZone */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* NgZone */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injector */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injector */]) === "function" && _e || Object])
     ], SearchPage);
     return SearchPage;
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e;
 }());
 
 //# sourceMappingURL=home.js.map
 
 /***/ }),
 
-/***/ 197:
+/***/ 198:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -279,13 +400,13 @@ var ListPage = (function () {
 
 /***/ }),
 
-/***/ 198:
+/***/ 199:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__ = __webpack_require__(199);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_module__ = __webpack_require__(222);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__ = __webpack_require__(200);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_module__ = __webpack_require__(223);
 
 
 Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* platformBrowserDynamic */])().bootstrapModule(__WEBPACK_IMPORTED_MODULE_1__app_module__["a" /* AppModule */]);
@@ -293,7 +414,7 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 
 /***/ }),
 
-/***/ 222:
+/***/ 223:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -301,13 +422,13 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_component__ = __webpack_require__(265);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__pages_home_home__ = __webpack_require__(194);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__pages_list_list__ = __webpack_require__(197);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ionic_native_geolocation__ = __webpack_require__(195);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_status_bar__ = __webpack_require__(191);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_splash_screen__ = __webpack_require__(193);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__angular_http__ = __webpack_require__(196);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_component__ = __webpack_require__(191);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__pages_home_home__ = __webpack_require__(195);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__pages_list_list__ = __webpack_require__(198);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ionic_native_geolocation__ = __webpack_require__(196);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_status_bar__ = __webpack_require__(192);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_splash_screen__ = __webpack_require__(194);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__angular_http__ = __webpack_require__(197);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -350,6 +471,7 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_4__pages_home_home__["b" /* SearchPage */]
             ],
             providers: [
+                __WEBPACK_IMPORTED_MODULE_3__app_component__["a" /* MyApp */],
                 __WEBPACK_IMPORTED_MODULE_7__ionic_native_status_bar__["a" /* StatusBar */],
                 __WEBPACK_IMPORTED_MODULE_8__ionic_native_splash_screen__["a" /* SplashScreen */],
                 __WEBPACK_IMPORTED_MODULE_6__ionic_native_geolocation__["a" /* Geolocation */],
@@ -362,79 +484,7 @@ var AppModule = (function () {
 
 //# sourceMappingURL=app.module.js.map
 
-/***/ }),
-
-/***/ 265:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MyApp; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__ = __webpack_require__(191);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__ = __webpack_require__(193);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__pages_home_home__ = __webpack_require__(194);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__pages_list_list__ = __webpack_require__(197);
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-
-
-
-
-
-
-var MyApp = (function () {
-    function MyApp(platform, statusBar, splashScreen) {
-        this.platform = platform;
-        this.statusBar = statusBar;
-        this.splashScreen = splashScreen;
-        this.rootPage = __WEBPACK_IMPORTED_MODULE_4__pages_home_home__["a" /* HomePage */];
-        this.initializeApp();
-        // used for an example of ngFor and navigation
-        this.pages = [
-            { icon: 'fa-credit-card-alt', title: 'Credits', component: __WEBPACK_IMPORTED_MODULE_4__pages_home_home__["a" /* HomePage */] },
-            { icon: 'fa-ticket', title: 'Promotions', component: __WEBPACK_IMPORTED_MODULE_5__pages_list_list__["a" /* ListPage */] },
-            { icon: 'fa-car', title: 'My trips', component: __WEBPACK_IMPORTED_MODULE_5__pages_list_list__["a" /* ListPage */] },
-            { icon: 'fa-info-circle', title: 'Help', component: __WEBPACK_IMPORTED_MODULE_5__pages_list_list__["a" /* ListPage */] },
-            { icon: 'fa-sign-out', title: 'Log out', component: __WEBPACK_IMPORTED_MODULE_5__pages_list_list__["a" /* ListPage */] }
-        ];
-    }
-    MyApp.prototype.initializeApp = function () {
-        var _this = this;
-        this.platform.ready().then(function () {
-            // Okay, so the platform is ready and our plugins are available.
-            // Here you can do any higher level native things you might need.
-            _this.statusBar.styleDefault();
-            _this.splashScreen.hide();
-        });
-    };
-    MyApp.prototype.openPage = function (page) {
-        // Reset the content nav to have just this page
-        // we wouldn't want the back button to show in this scenario
-        this.nav.setRoot(page.component);
-    };
-    __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_8" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* Nav */]),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* Nav */])
-    ], MyApp.prototype, "nav", void 0);
-    MyApp = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({template:/*ion-inline-start:"/Users/lester.coloso/Documents/mobile/Ride/src/app/app.html"*/'<ion-menu [content]="content">\n  <ion-header user-container>\n    \n    <div user-pic-container>\n      <div></div>\n    </div>\n    <div user-name>Test User</div>\n\n  </ion-header>\n\n  <ion-content>\n    <ion-list>\n      <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)" pages>\n        <i class="fa {{p.icon}}" aria-hidden="true"></i>\n        {{p.title}}\n      </button>\n    </ion-list>\n  </ion-content>\n\n</ion-menu>\n\n<!-- Disable swipe-to-go-back because it\'s poor UX to combine STGB with side menus -->\n<ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>'/*ion-inline-end:"/Users/lester.coloso/Documents/mobile/Ride/src/app/app.html"*/
-        }),
-        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* Platform */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__["a" /* StatusBar */], __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__["a" /* SplashScreen */]])
-    ], MyApp);
-    return MyApp;
-}());
-
-//# sourceMappingURL=app.component.js.map
-
 /***/ })
 
-},[198]);
+},[199]);
 //# sourceMappingURL=main.js.map

@@ -14,13 +14,13 @@
 <div search-container>
 
 <div> 
-  <ion-input type="text" (click)="openSearch(mylat, mylng)" id="pickup" #places [value]="pickup" [(ngModel)]="pickup" placeholder="Pick up location" >
+  <ion-input type="text" (click)="openSearch('pickup')" id="pickup" #places [value]="MainApp.pickup.address" [(ngModel)]="MainApp.pickup.address" placeholder="Pick up location" >
   </ion-input>
   <!-- <ion-icon name="pin"></ion-icon> -->
 </div>
 
 <div>
-  <ion-input type="text" id="dropoff" [value]="dropoff" [(ngModel)]="dropoff" placeholder="Drop off location"></ion-input>
+  <ion-input type="text" (click)="openSearch('dropoff')" id="dropoff" [value]="MainApp.dropoff.address" [(ngModel)]="MainApp.dropoff.address" placeholder="Drop off location"></ion-input>
   <!-- <ion-icon name="pin"></ion-icon> -->
 </div>
 </div>

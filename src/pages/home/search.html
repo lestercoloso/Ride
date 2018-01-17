@@ -1,7 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Enter address</ion-title>
-    <ion-searchbar [(ngModel)]="autocomplete.query" [showCancelButton]="true"   (ionInput)="updateSearch()" (ionCancel)="dismiss()"></ion-searchbar>
+    <ion-searchbar (click)="MainApp.changeAddress('test','hellos')" [(ngModel)]="autocomplete.query" [showCancelButton]="true" (ionInput)="updateSearch()" (ionCancel)="dismiss()"></ion-searchbar>
   </ion-toolbar>
 </ion-header>
 

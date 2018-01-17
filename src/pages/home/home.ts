@@ -1,8 +1,11 @@
-import { Component, ViewChild, ElementRef, NgZone } from '@angular/core';
+import { Component, ViewChild, ElementRef, NgZone, Inject, Injector, Injectable } from '@angular/core';
 import { NavController, ModalController, NavParams, ViewController} from 'ionic-angular';
 import { Geolocation } from '@ionic-native/geolocation';
 import { Http, Response, Headers, RequestOptions, URLSearchParams } from '@angular/http'; 
- 
+import { MyApp } from '../../app/app.component';
+
+
+
 declare var google;
  
 @Component({
@@ -13,6 +16,7 @@ export class HomePage {
  
   @ViewChild('map') mapElement: ElementRef;
   @ViewChild('places') places: ElementRef;
+  MainApp: any;
   map: any;
   mylocation: any = [];
   pickup: any;
@@ -26,19 +30,28 @@ export class HomePage {
     public navCtrl: NavController, 
     public geolocation: Geolocation,
     public http: Http,
-    public modalCtrl: ModalController
+    public modalCtrl: ModalController,
+    private inj:Injector
     ) {
+
+    this.MainApp = this.inj.get(MyApp);
   }
  
   ionViewDidLoad(){
     this.loadMap();
-
-
   }
 
-  openSearch(lat, lng){
+  openSearch(type){
 
-	let searchModal = this.modalCtrl.create(SearchPage, { lat: lat, lng: lng });
+	let searchModal = this.modalCtrl.create(SearchPage, { type:type });
+  searchModal.onDidDismiss(data => {
+    let type = data.type;
+    let address = data.location.address;
+    let lat = data.location.lat;
+    let lng = data.location.lng;
+    this.MainApp.changeAddress(type, address, lat, lng);
+
+  });
 	searchModal.present();
 
   }
@@ -51,27 +64,20 @@ export class HomePage {
 
       this.mylat = position.coords.latitude;
       this.mylng = position.coords.longitude;
+
+      this.MainApp.centerlat = position.coords.latitude;
+      this.MainApp.centerlng = position.coords.longitude;
       
       let mapOptions = {
         center: latLng,
+        icon: this.usericon,
         zoom: 16,
         mapTypeId: 'roadmap'
       }
 
       this.getAddress(position.coords.latitude, position.coords.longitude);
       this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
-
-
-    let autocomplete = new google.maps.places.Autocomplete(this.places.nativeElement);
-    google.maps.event.addListener(autocomplete, 'place_changed', () => {
-
-        let place = autocomplete.getPlace();
-        let latitude = place.geometry.location.lat();
-        let longitude = place.geometry.location.lng();
-        alert(latitude + ", " + longitude);
-        console.log(place);
-      });
-
+      this.myLocation();
 
     }, (err) => {
       console.log(err);
@@ -83,8 +89,9 @@ export class HomePage {
   getAddress(lt,lng){
     this.http.get('http://maps.googleapis.com/maps/api/geocode/json?latlng='+lt+','+lng+'&sensor=true/false', { }).subscribe(data => {
       let result =  data.json();
-      this.pickup = result.results[0].formatted_address;
-
+      if(result.results[0]){
+       this.MainApp.pickup.address = result.results[0].formatted_address;       
+      }
     }, error => {
         alert('Unable to get the address');
     });  
@@ -94,12 +101,12 @@ export class HomePage {
 
   myLocation(){
 
-      let center = new google.maps.LatLng(this.mylat, this.mylng);
+      let center = new google.maps.LatLng(this.MainApp.centerlat, this.MainApp.centerlng);
         this.map.panTo(center);
 
 		  let marker = new google.maps.Marker({
 		    map: this.map,
-		    animation: google.maps.Animation.DROP,
+		    // animation: google.maps.Animation.DROP,
 		    icon: this.usericon,
         zoom: 18,
 		    position: this.map.getCenter()
@@ -110,12 +117,11 @@ export class HomePage {
 			}
 
 		   this.mylocation.push(marker);
-	  	 let content = "<h4>You!</h4>";         
+	  	 let content = "<h4>You!</h4>";     
 		   // this.addInfoWindow(marker, content);
+
+
 }
-
-
-
 
   addInfoWindow(marker, content){
    
@@ -128,7 +134,35 @@ export class HomePage {
   //  });
   }
  
+    startNavigating(){
+ 
+        // let directionsService = new google.maps.DirectionsService;
+        // let directionsDisplay = new google.maps.DirectionsRenderer;
+ 
+        // directionsDisplay.setMap(this.map);
+        // directionsDisplay.setPanel(this.directionsPanel.nativeElement);
+ 
+        // directionsService.route({
+        //     origin: 'adelaide',
+        //     destination: 'adelaide oval',
+        //     travelMode: google.maps.TravelMode['DRIVING']
+        // }, (res, status) => {
+ 
+        //     if(status == google.maps.DirectionsStatus.OK){
+        //         directionsDisplay.setDirections(res);
+        //     } else {
+        //         console.warn(status);
+        //     }
+ 
+        // });
+ 
+    }
+
+ 
 }
+
+
+
 
 
 
@@ -142,6 +176,10 @@ export class SearchPage{
   latitude: number = 0;
   longitude: number = 0;
   geo: any;
+  type: any;
+  MainApp: any;
+  location_data: any = [];
+
 
 service = new google.maps.places.AutocompleteService();
 
@@ -149,26 +187,15 @@ service = new google.maps.places.AutocompleteService();
  	  public params: NavParams,
     public http: Http,
     public viewCtrl: ViewController, 
-    private zone: NgZone
+    private zone: NgZone,
+    private inj:Injector
  	) {
-
+this.MainApp = this.inj.get(MyApp);
     this.autocompleteItems = [];
     this.autocomplete = {
       query: ''
     };
-
- 	// this.longitude = params.get('lng');
- 	// this.latitude = params.get('lat');
-
-
-      // let script = document.createElement("script");
-      // script.id = "googleMaps";
-
-      // let apiKey = 'AIzaSyA9f8YjPIgwAr-ZIscN1nTMmGUZsDsHbTQ';
-      // script.src = 'https://maps.googleapis.com/maps/api/js?key='+apiKey+'&libraries=places&callback=initAutocomplete';
-      
-      // document.body.appendChild(script);  
-
+this.type = params.get('type');
  }
 
 
@@ -177,9 +204,9 @@ service = new google.maps.places.AutocompleteService();
   }
 
   chooseItem(item: any) {
-    this.viewCtrl.dismiss(item);
     this.geo = item;
     this.geoCode(this.geo);//convert Address to lat and long
+    this.viewCtrl.dismiss({type:this.type, location:this.location_data});
   }
 
 
@@ -192,9 +219,11 @@ service = new google.maps.places.AutocompleteService();
     this.service.getPlacePredictions({ input: this.autocomplete.query,  componentRestrictions: {country: 'PH'} }, function (predictions, status) {
       me.autocompleteItems = []; 
       me.zone.run(function () {
-        predictions.forEach(function (prediction) {
-          me.autocompleteItems.push(prediction.description);
-        });
+        if(predictions){
+          predictions.forEach(function (prediction) {
+            me.autocompleteItems.push(prediction.description);
+          });   
+        }
       });
     });
   }
@@ -203,9 +232,12 @@ service = new google.maps.places.AutocompleteService();
   geoCode(address:any) {
     let geocoder = new google.maps.Geocoder();
     geocoder.geocode({ 'address': address }, (results, status) => {
-    this.latitude = results[0].geometry.location.lat();
-    this.longitude = results[0].geometry.location.lng();
-    alert("lat: " + this.latitude + ", long: " + this.longitude);
+      // this.longitude = 12232;
+      this.location_data.address = results[0].formatted_address;
+      this.location_data.lat = results[0].geometry.location.lat();
+      this.location_data.lng = results[0].geometry.location.lng();
+      // this.MainApp.changeAddress('test','hellos');
+      // this.MainApp.changeAddress(this.type, results[0].formatted_address, results[0].geometry.location.lat(), results[0].geometry.location.lng());
    });
  }
 
@@ -216,22 +248,6 @@ service = new google.maps.places.AutocompleteService();
 	}
 
 
-	// updateSearch(key){
-	//    this.http.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json?location='+this.latitude+', '+this.longitude+'&radius=1000&keyword='+this.key+'&key=AIzaSyArxGIDm4Ksf4GAuzpoG7xyLP1VTLiynmc', { }).subscribe(data => {
-	//        let result =  data.json();
-	//        if(result.status=="OK"){
-	// 			for(let address of result.results) {
-	// 				console.log(address.vicinity);
-	// 			}
-	//        }else{
-	//        	alert("No Results found.");
-	//        }
-	//       console.log(result);
-	//     }, error => {
-	//         alert('Unable to get the address');
-	//     });  
-
-	// }
 
 
 
