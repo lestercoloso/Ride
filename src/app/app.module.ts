@@ -32,6 +32,7 @@ import { HttpModule } from '@angular/http';
     SearchPage
   ],
   providers: [
+    MyApp,
     StatusBar,
     SplashScreen,
     Geolocation,

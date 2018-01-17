@@ -3,7 +3,7 @@ import { Nav, Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
-import { HomePage } from '../pages/home/home';
+import { HomePage, SearchPage  } from '../pages/home/home';
 import { ListPage } from '../pages/list/list';
 
 @Component({
@@ -13,6 +13,10 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
   rootPage: any = HomePage;
+  pickup: any = [];
+  dropoff: any = [];
+  centerlng: any;
+  centerlat: any;
 
   pages: Array<{icon:string, title: string, component: any}>;
 
@@ -23,7 +27,7 @@ export class MyApp {
     this.pages = [
       { icon:'fa-credit-card-alt', title: 'Credits', component: HomePage },
       { icon:'fa-ticket', title: 'Promotions', component: ListPage },
-      { icon:'fa-car', title: 'My trips', component: ListPage },
+      { icon:'fa-car', title: 'My trips', component: SearchPage },
       { icon:'fa-info-circle', title: 'Help', component: ListPage },
       { icon:'fa-sign-out', title: 'Log out', component: ListPage }
     ];
@@ -36,7 +40,28 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+
+      this.pickup.address = '';
+      this.pickup.lat = '';
+      this.pickup.lng = '';
+
+      this.dropoff.address = '';
+      this.dropoff.lat = '';
+      this.dropoff.lng = '';
+
     });
+  }
+
+  changeAddress(data){
+      if(data.type=="pickup"){
+        this.pickup.address = data.location.address;
+        this.pickup.lat = data.location.lat;
+        this.pickup.lng = data.location.lng;
+      }else{
+        this.dropoff.address = data.location.address;
+        this.dropoff.lat = data.location.lat;
+        this.dropoff.lng = data.location.lng;
+      }
   }
 
   openPage(page) {

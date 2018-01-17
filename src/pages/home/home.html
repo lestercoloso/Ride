@@ -9,27 +9,30 @@
   <ion-fab right bottom green>
     <button ion-fab color="light" (click)="myLocation()"><ion-icon name="locate"></ion-icon></button>
   </ion-fab>
-
+ 
 
 <div search-container>
 
-<div> 
-  <ion-input type="text" (click)="openSearch(mylat, mylng)" id="pickup" #places [value]="pickup" [(ngModel)]="pickup" placeholder="Pick up location" >
-  </ion-input>
-  <!-- <ion-icon name="pin"></ion-icon> -->
-</div>
+  <div searchmap style="border-bottom: 1px solid #97f997;" (click)="openSearch('pickup')">
+    <i class="fa fa-map-marker" aria-hidden="true"></i>
+    <span >{{MainApp.pickup.address}}</span> 
+  </div>
 
-<div>
-  <ion-input type="text" id="dropoff" [value]="dropoff" [(ngModel)]="dropoff" placeholder="Drop off location"></ion-input>
-  <!-- <ion-icon name="pin"></ion-icon> -->
-</div>
+  <div searchmap (click)="openSearch('dropoff')">
+    <i class="fa fa-map-marker" aria-hidden="true"></i>
+    <span >{{MainApp.dropoff.address}}</span> 
+  </div>
+
 </div>
 
 
 
 
 <div #map id="map"></div> 
+<div showbook *ngIf="showbook" padding>
 
+  <button ion-button full >Book</button>
+</div>
 
  
 </ion-content>
