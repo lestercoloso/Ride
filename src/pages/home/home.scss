@@ -22,7 +22,7 @@
       position: absolute;
       z-index: 100;
       width: 100%;
-      margin-top: 55px;
+      margin-top: 75px;
     }
 
     [search-container] ion-input{
@@ -34,7 +34,38 @@
     }
 
     [search-container] ion-input input{
-        padding: 5px;
+        padding-top: 5px;
+    }
+
+    [searchmap]{
+      height: 50px;
+      width: 90%;
+      margin: 0 5%;
+      background: white;
+      padding: 10px;
+      line-height: 30px;
+    }
+    [searchmap] span{
+      float:left;
+      width: 90%;
+      display: inline-block;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    [searchmap] i{
+      line-height: 25px;
+      float:left;
+      color: green;
+      width: 7%;
+    }
+
+    [showbook]{
+      width: 100%;
+      position: absolute;
+      background: white;
+      bottom: 0;
+      height: 30%;
     }
  
 }

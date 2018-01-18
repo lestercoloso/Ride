@@ -61,10 +61,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 var MyApp = (function () {
-    function MyApp(platform, statusBar, splashScreen) {
+    function MyApp(platform, statusBar, splashScreen, alertCtrl, toastCtrl) {
         this.platform = platform;
         this.statusBar = statusBar;
         this.splashScreen = splashScreen;
+        this.alertCtrl = alertCtrl;
+        this.toastCtrl = toastCtrl;
         this.rootPage = __WEBPACK_IMPORTED_MODULE_4__pages_home_home__["a" /* HomePage */];
         this.pickup = [];
         this.dropoff = [];
@@ -93,16 +95,16 @@ var MyApp = (function () {
             _this.dropoff.lng = '';
         });
     };
-    MyApp.prototype.changeAddress = function (type, address, lat, lng) {
-        if (type == "pickup") {
-            this.pickup.address = address;
-            this.pickup.lat = lat;
-            this.pickup.lng = lng;
+    MyApp.prototype.changeAddress = function (data) {
+        if (data.type == "pickup") {
+            this.pickup.address = data.location.address;
+            this.pickup.lat = data.location.lat;
+            this.pickup.lng = data.location.lng;
         }
         else {
-            this.dropoff.address = address;
-            this.dropoff.lat = lat;
-            this.dropoff.lng = lng;
+            this.dropoff.address = data.location.address;
+            this.dropoff.lat = data.location.lat;
+            this.dropoff.lng = data.location.lng;
         }
     };
     MyApp.prototype.openPage = function (page) {
@@ -110,14 +112,43 @@ var MyApp = (function () {
         // we wouldn't want the back button to show in this scenario
         this.nav.setRoot(page.component);
     };
+    MyApp.prototype.presentToast = function (m) {
+        if (m === void 0) { m = ''; }
+        var toast = this.toastCtrl.create({
+            message: m,
+            duration: 3000,
+            position: 'middle'
+        });
+        toast.onDidDismiss(function () {
+        });
+        toast.present();
+    };
+    MyApp.prototype.presentAlert = function (m, t, b, css) {
+        if (m === void 0) { m = ''; }
+        if (t === void 0) { t = ''; }
+        if (b === void 0) { b = 'OK'; }
+        if (css === void 0) { css = ''; }
+        var alert = this.alertCtrl.create({
+            title: t,
+            subTitle: m,
+            cssClass: css,
+            enableBackdropDismiss: false,
+            buttons: [b]
+        });
+        alert.present();
+    };
     __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_8" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* Nav */]),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* Nav */])
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_8" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* Nav */]),
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* Nav */])
     ], MyApp.prototype, "nav", void 0);
     MyApp = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({template:/*ion-inline-start:"/Users/lester.coloso/Documents/mobile/Ride/src/app/app.html"*/'<ion-menu [content]="content">\n  <ion-header user-container>\n    \n    <div user-pic-container>\n      <div></div>\n    </div>\n    <div user-name>Test User</div>\n\n  </ion-header>\n\n  <ion-content>\n    <ion-list>\n      <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)" pages>\n        <i class="fa {{p.icon}}" aria-hidden="true"></i>\n        {{p.title}}\n      </button>\n    </ion-list>\n  </ion-content>\n\n</ion-menu>\n\n<!-- Disable swipe-to-go-back because it\'s poor UX to combine STGB with side menus -->\n<ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>'/*ion-inline-end:"/Users/lester.coloso/Documents/mobile/Ride/src/app/app.html"*/
         }),
-        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* Platform */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__["a" /* StatusBar */], __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__["a" /* SplashScreen */]])
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* Platform */],
+            __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__["a" /* StatusBar */],
+            __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__["a" /* SplashScreen */],
+            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */],
+            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* ToastController */]])
     ], MyApp);
     return MyApp;
 }());
@@ -137,6 +168,7 @@ var MyApp = (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__ = __webpack_require__(196);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_http__ = __webpack_require__(197);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__app_app_component__ = __webpack_require__(191);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ionic_native_diagnostic__ = __webpack_require__(274);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -151,31 +183,22 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var HomePage = (function () {
-    function HomePage(navCtrl, geolocation, http, modalCtrl, inj) {
+    function HomePage(diagnostic, navCtrl, geolocation, http, modalCtrl, inj) {
+        this.diagnostic = diagnostic;
         this.navCtrl = navCtrl;
         this.geolocation = geolocation;
         this.http = http;
         this.modalCtrl = modalCtrl;
         this.inj = inj;
         this.mylocation = [];
+        this.showbook = false;
         this.usericon = "assets/icon/man.png";
         this.MainApp = this.inj.get(__WEBPACK_IMPORTED_MODULE_4__app_app_component__["a" /* MyApp */]);
     }
     HomePage.prototype.ionViewDidLoad = function () {
         this.loadMap();
-    };
-    HomePage.prototype.openSearch = function (type) {
-        var _this = this;
-        var searchModal = this.modalCtrl.create(SearchPage, { type: type });
-        searchModal.onDidDismiss(function (data) {
-            var type = data.type;
-            var address = data.location.address;
-            var lat = data.location.lat;
-            var lng = data.location.lng;
-            _this.MainApp.changeAddress(type, address, lat, lng);
-        });
-        searchModal.present();
     };
     HomePage.prototype.loadMap = function () {
         var _this = this;
@@ -185,11 +208,14 @@ var HomePage = (function () {
             _this.mylng = position.coords.longitude;
             _this.MainApp.centerlat = position.coords.latitude;
             _this.MainApp.centerlng = position.coords.longitude;
+            _this.MainApp.pickup.lat = position.coords.latitude;
+            _this.MainApp.pickup.lng = position.coords.longitude;
             var mapOptions = {
                 center: latLng,
                 icon: _this.usericon,
                 zoom: 16,
-                mapTypeId: 'roadmap'
+                // mapTypeId: 'roadmap',
+                disableDefaultUI: true
             };
             _this.getAddress(position.coords.latitude, position.coords.longitude);
             _this.map = new google.maps.Map(_this.mapElement.nativeElement, mapOptions);
@@ -235,22 +261,41 @@ var HomePage = (function () {
         infoWindow.open(this.map, marker);
         //  });
     };
+    HomePage.prototype.openSearch = function (type) {
+        var _this = this;
+        var searchModal = this.modalCtrl.create(SearchPage, { type: type });
+        searchModal.onDidDismiss(function (data) {
+            console.log(data);
+            if (data) {
+                console.log(data);
+                _this.MainApp.changeAddress(data);
+                if (_this.MainApp.dropoff && _this.MainApp.pickup) {
+                    _this.startNavigating();
+                }
+            }
+        });
+        searchModal.present();
+    };
     HomePage.prototype.startNavigating = function () {
-        // let directionsService = new google.maps.DirectionsService;
-        // let directionsDisplay = new google.maps.DirectionsRenderer;
-        // directionsDisplay.setMap(this.map);
+        var _this = this;
+        var directionsService = new google.maps.DirectionsService;
+        var directionsDisplay = new google.maps.DirectionsRenderer({ polylineOptions: { strokeColor: "black" } });
+        directionsDisplay.setMap(this.map);
         // directionsDisplay.setPanel(this.directionsPanel.nativeElement);
-        // directionsService.route({
-        //     origin: 'adelaide',
-        //     destination: 'adelaide oval',
-        //     travelMode: google.maps.TravelMode['DRIVING']
-        // }, (res, status) => {
-        //     if(status == google.maps.DirectionsStatus.OK){
-        //         directionsDisplay.setDirections(res);
-        //     } else {
-        //         console.warn(status);
-        //     }
-        // });
+        directionsService.route({
+            origin: { lat: this.MainApp.pickup.lat, lng: this.MainApp.pickup.lng },
+            destination: { lat: this.MainApp.dropoff.lat, lng: this.MainApp.dropoff.lng },
+            travelMode: google.maps.TravelMode['DRIVING']
+        }, function (res, status) {
+            // console.log(res);
+            _this.showbook = true;
+            if (status == google.maps.DirectionsStatus.OK) {
+                directionsDisplay.setDirections(res);
+            }
+            else {
+                console.warn(status);
+            }
+        });
     };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_8" /* ViewChild */])('map'),
@@ -262,12 +307,12 @@ var HomePage = (function () {
     ], HomePage.prototype, "places", void 0);
     HomePage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'home-page',template:/*ion-inline-start:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/home/home.html"*/'\n\n<ion-content>\n\n<ion-fab top left green>\n    <button ion-fab mini menuToggle><ion-icon name="menu"></ion-icon></button>\n</ion-fab>\n\n  <ion-fab right bottom green>\n    <button ion-fab color="light" (click)="myLocation()"><ion-icon name="locate"></ion-icon></button>\n  </ion-fab>\n\n\n<div search-container>\n\n<div> \n  <ion-input type="text" (click)="openSearch(\'pickup\')" id="pickup" #places [value]="MainApp.pickup.address" [(ngModel)]="MainApp.pickup.address" placeholder="Pick up location" >\n  </ion-input>\n  <!-- <ion-icon name="pin"></ion-icon> -->\n</div>\n\n<div>\n  <ion-input type="text" (click)="openSearch(\'dropoff\')" id="dropoff" [value]="MainApp.dropoff.address" [(ngModel)]="MainApp.dropoff.address" placeholder="Drop off location"></ion-input>\n  <!-- <ion-icon name="pin"></ion-icon> -->\n</div>\n</div>\n\n\n\n\n<div #map id="map"></div> \n\n\n \n</ion-content>\n'/*ion-inline-end:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/home/home.html"*/
+            selector: 'home-page',template:/*ion-inline-start:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/home/home.html"*/'\n\n<ion-content>\n\n<ion-fab top left green>\n    <button ion-fab mini menuToggle><ion-icon name="menu"></ion-icon></button>\n</ion-fab>\n\n  <ion-fab right bottom green>\n    <button ion-fab color="light" (click)="myLocation()"><ion-icon name="locate"></ion-icon></button>\n  </ion-fab>\n \n\n<div search-container>\n\n  <div searchmap style="border-bottom: 1px solid #97f997;" (click)="openSearch(\'pickup\')">\n    <i class="fa fa-map-marker" aria-hidden="true"></i>\n    <span >{{MainApp.pickup.address}}</span> \n  </div>\n\n  <div searchmap (click)="openSearch(\'dropoff\')">\n    <i class="fa fa-map-marker" aria-hidden="true"></i>\n    <span >{{MainApp.dropoff.address}}</span> \n  </div>\n\n</div>\n\n\n\n\n<div #map id="map"></div> \n<div showbook *ngIf="showbook" padding>\n\n  <button ion-button full >Book</button>\n</div>\n\n \n</ion-content>\n'/*ion-inline-end:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/home/home.html"*/
         }),
-        __metadata("design:paramtypes", [typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* NavController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* NavController */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__["a" /* Geolocation */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__["a" /* Geolocation */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["d" /* ModalController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["d" /* ModalController */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injector */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injector */]) === "function" && _g || Object])
+        __metadata("design:paramtypes", [typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_5__ionic_native_diagnostic__["a" /* Diagnostic */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_5__ionic_native_diagnostic__["a" /* Diagnostic */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavController */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__["a" /* Geolocation */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__["a" /* Geolocation */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* ModalController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* ModalController */]) === "function" && _g || Object, typeof (_h = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injector */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injector */]) === "function" && _h || Object])
     ], HomePage);
     return HomePage;
-    var _a, _b, _c, _d, _e, _f, _g;
+    var _a, _b, _c, _d, _e, _f, _g, _h;
 }());
 
 var SearchPage = (function () {
@@ -288,6 +333,8 @@ var SearchPage = (function () {
         };
         this.type = params.get('type');
     }
+    SearchPage.prototype.ionViewLoaded = function () {
+    };
     SearchPage.prototype.dismiss = function () {
         this.viewCtrl.dismiss();
     };
@@ -331,9 +378,9 @@ var SearchPage = (function () {
     };
     SearchPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'search-page',template:/*ion-inline-start:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/home/search.html"*/'<ion-header>\n  <ion-toolbar>\n    <ion-searchbar (click)="MainApp.changeAddress(\'test\',\'hellos\')" [(ngModel)]="autocomplete.query" [showCancelButton]="true" (ionInput)="updateSearch()" (ionCancel)="dismiss()"></ion-searchbar>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content>\n  <ion-list>\n    <ion-item *ngFor="let item of autocompleteItems" tappable   (click)="chooseItem(item)">\n      {{ item }}\n    </ion-item>\n  </ion-list>\n</ion-content>'/*ion-inline-end:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/home/search.html"*/
+            selector: 'search-page',template:/*ion-inline-start:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/home/search.html"*/'<ion-header>\n  <ion-toolbar>\n\n    <ion-searchbar  #input [(ngModel)]="autocomplete.query" [showCancelButton]="true" (ionInput)="updateSearch()" (ionCancel)="dismiss()"></ion-searchbar>\n\n  </ion-toolbar>\n</ion-header>\n\n<ion-content>\n\n  <ion-list>\n    <ion-item *ngFor="let item of autocompleteItems" (click)="chooseItem(item)">\n      {{ item }}\n    </ion-item>\n  </ion-list>\n</ion-content>'/*ion-inline-end:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/home/search.html"*/
         }),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavParams */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavParams */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* ViewController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* ViewController */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* NgZone */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* NgZone */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injector */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injector */]) === "function" && _e || Object])
+        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* NavParams */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* NavParams */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* ViewController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* ViewController */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* NgZone */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* NgZone */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injector */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injector */]) === "function" && _e || Object])
     ], SearchPage);
     return SearchPage;
     var _a, _b, _c, _d, _e;
@@ -390,7 +437,7 @@ var ListPage = (function () {
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
             selector: 'page-list',template:/*ion-inline-start:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/list/list.html"*/'<ion-header>\n  <ion-navbar>\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>List</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content>\n  <ion-list>\n    <button ion-item *ngFor="let item of items" (click)="itemTapped($event, item)">\n      <ion-icon [name]="item.icon" item-start></ion-icon>\n      {{item.title}}\n      <div class="item-note" item-end>\n        {{item.note}}\n      </div>\n    </button>\n  </ion-list>\n  <div *ngIf="selectedItem" padding>\n    You navigated here from <b>{{selectedItem.title}}</b>\n  </div>\n</ion-content>\n'/*ion-inline-end:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/list/list.html"*/
         }),
-        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavParams */]])
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* NavParams */]])
     ], ListPage);
     return ListPage;
     var ListPage_1;
@@ -428,7 +475,8 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ionic_native_geolocation__ = __webpack_require__(196);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_status_bar__ = __webpack_require__(192);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_splash_screen__ = __webpack_require__(194);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__angular_http__ = __webpack_require__(197);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__ionic_native_diagnostic__ = __webpack_require__(274);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__angular_http__ = __webpack_require__(197);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -445,6 +493,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 
 
+// import { ConnectivityService } from '../providers/connectivity-service';
+
 var AppModule = (function () {
     function AppModule() {
     }
@@ -458,12 +508,12 @@ var AppModule = (function () {
             ],
             imports: [
                 __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__["a" /* BrowserModule */],
-                __WEBPACK_IMPORTED_MODULE_9__angular_http__["b" /* HttpModule */],
-                __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["c" /* IonicModule */].forRoot(__WEBPACK_IMPORTED_MODULE_3__app_component__["a" /* MyApp */], {}, {
+                __WEBPACK_IMPORTED_MODULE_10__angular_http__["b" /* HttpModule */],
+                __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["d" /* IonicModule */].forRoot(__WEBPACK_IMPORTED_MODULE_3__app_component__["a" /* MyApp */], {}, {
                     links: []
                 }),
             ],
-            bootstrap: [__WEBPACK_IMPORTED_MODULE_2_ionic_angular__["a" /* IonicApp */]],
+            bootstrap: [__WEBPACK_IMPORTED_MODULE_2_ionic_angular__["b" /* IonicApp */]],
             entryComponents: [
                 __WEBPACK_IMPORTED_MODULE_3__app_component__["a" /* MyApp */],
                 __WEBPACK_IMPORTED_MODULE_4__pages_home_home__["a" /* HomePage */],
@@ -471,11 +521,13 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_4__pages_home_home__["b" /* SearchPage */]
             ],
             providers: [
+                // ConnectivityService,
+                __WEBPACK_IMPORTED_MODULE_9__ionic_native_diagnostic__["a" /* Diagnostic */],
                 __WEBPACK_IMPORTED_MODULE_3__app_component__["a" /* MyApp */],
                 __WEBPACK_IMPORTED_MODULE_7__ionic_native_status_bar__["a" /* StatusBar */],
                 __WEBPACK_IMPORTED_MODULE_8__ionic_native_splash_screen__["a" /* SplashScreen */],
                 __WEBPACK_IMPORTED_MODULE_6__ionic_native_geolocation__["a" /* Geolocation */],
-                { provide: __WEBPACK_IMPORTED_MODULE_1__angular_core__["u" /* ErrorHandler */], useClass: __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["b" /* IonicErrorHandler */] }
+                { provide: __WEBPACK_IMPORTED_MODULE_1__angular_core__["u" /* ErrorHandler */], useClass: __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["c" /* IonicErrorHandler */] }
             ]
         })
     ], AppModule);

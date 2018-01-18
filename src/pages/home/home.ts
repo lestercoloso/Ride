@@ -3,6 +3,7 @@ import { NavController, ModalController, NavParams, ViewController} from 'ionic-
 import { Geolocation } from '@ionic-native/geolocation';
 import { Http, Response, Headers, RequestOptions, URLSearchParams } from '@angular/http'; 
 import { MyApp } from '../../app/app.component';
+import { Diagnostic } from '@ionic-native/diagnostic';
 
 
 
@@ -23,10 +24,12 @@ export class HomePage {
   dropoff: any;
   mylat: any;
   mylng: any;
+  showbook: boolean = false;
   usericon: any = "assets/icon/man.png";
  
  
   constructor(
+    private diagnostic: Diagnostic,
     public navCtrl: NavController, 
     public geolocation: Geolocation,
     public http: Http,
@@ -38,23 +41,15 @@ export class HomePage {
   }
  
   ionViewDidLoad(){
-    this.loadMap();
+
+
+
+        this.loadMap(); 
+
+    
   }
 
-  openSearch(type){
 
-	let searchModal = this.modalCtrl.create(SearchPage, { type:type });
-  searchModal.onDidDismiss(data => {
-    let type = data.type;
-    let address = data.location.address;
-    let lat = data.location.lat;
-    let lng = data.location.lng;
-    this.MainApp.changeAddress(type, address, lat, lng);
-
-  });
-	searchModal.present();
-
-  }
  
   loadMap(){
  
@@ -67,12 +62,16 @@ export class HomePage {
 
       this.MainApp.centerlat = position.coords.latitude;
       this.MainApp.centerlng = position.coords.longitude;
+
+      this.MainApp.pickup.lat = position.coords.latitude;
+      this.MainApp.pickup.lng = position.coords.longitude;
       
       let mapOptions = {
         center: latLng,
         icon: this.usericon,
         zoom: 16,
-        mapTypeId: 'roadmap'
+        // mapTypeId: 'roadmap',
+        disableDefaultUI: true
       }
 
       this.getAddress(position.coords.latitude, position.coords.longitude);
@@ -134,27 +133,45 @@ export class HomePage {
   //  });
   }
  
+
+  openSearch(type){
+
+	let searchModal = this.modalCtrl.create(SearchPage, { type:type });
+	  searchModal.onDidDismiss(data => {
+	  	console.log(data);
+      if(data){
+	  		console.log(data);
+			   this.MainApp.changeAddress(data); 
+  			if(this.MainApp.dropoff && this.MainApp.pickup){
+  				this.startNavigating();					
+  			}
+	  	}
+	  });
+	searchModal.present();
+
+  }
+
     startNavigating(){
  
-        // let directionsService = new google.maps.DirectionsService;
-        // let directionsDisplay = new google.maps.DirectionsRenderer;
+        let directionsService = new google.maps.DirectionsService;
+        let directionsDisplay = new google.maps.DirectionsRenderer({ polylineOptions: { strokeColor: "black" } });
  
-        // directionsDisplay.setMap(this.map);
+        directionsDisplay.setMap(this.map);
         // directionsDisplay.setPanel(this.directionsPanel.nativeElement);
  
-        // directionsService.route({
-        //     origin: 'adelaide',
-        //     destination: 'adelaide oval',
-        //     travelMode: google.maps.TravelMode['DRIVING']
-        // }, (res, status) => {
- 
-        //     if(status == google.maps.DirectionsStatus.OK){
-        //         directionsDisplay.setDirections(res);
-        //     } else {
-        //         console.warn(status);
-        //     }
- 
-        // });
+        directionsService.route({
+			origin: {lat: this.MainApp.pickup.lat, lng: this.MainApp.pickup.lng},
+			destination: {lat: this.MainApp.dropoff.lat, lng: this.MainApp.dropoff.lng},
+            travelMode: google.maps.TravelMode['DRIVING']
+        }, (res, status) => {
+        	// console.log(res);
+        	this.showbook = true;
+            if(status == google.maps.DirectionsStatus.OK){
+                directionsDisplay.setDirections(res);
+            } else {
+                console.warn(status);
+            }
+        });
  
     }
 
@@ -171,6 +188,7 @@ export class HomePage {
   templateUrl: 'search.html'
 })
 export class SearchPage{
+
   autocompleteItems;
   autocomplete;
   latitude: number = 0;
@@ -196,9 +214,16 @@ this.MainApp = this.inj.get(MyApp);
       query: ''
     };
 this.type = params.get('type');
+
+
+
  }
 
 
+  ionViewLoaded() {
+
+	}
+ 
  dismiss() {
     this.viewCtrl.dismiss();
   }

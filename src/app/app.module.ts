@@ -9,6 +9,8 @@ import { ListPage } from '../pages/list/list';
 import { Geolocation } from '@ionic-native/geolocation';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import { Diagnostic } from '@ionic-native/diagnostic';
+// import { ConnectivityService } from '../providers/connectivity-service';
 
 import { HttpModule } from '@angular/http'; 
 
@@ -32,6 +34,8 @@ import { HttpModule } from '@angular/http';
     SearchPage
   ],
   providers: [
+    // ConnectivityService,
+    Diagnostic,
     MyApp,
     StatusBar,
     SplashScreen,

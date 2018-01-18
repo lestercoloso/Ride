@@ -25734,7 +25734,7 @@ ion-navbar.toolbar {
   position: absolute;
   z-index: 100;
   width: 100%;
-  margin-top: 55px;
+  margin-top: 75px;
 }
 
 .ios [search-container] ion-input, .md [search-container] ion-input {
@@ -25746,5 +25746,38 @@ ion-navbar.toolbar {
 }
 
 .ios [search-container] ion-input input, .md [search-container] ion-input input {
-  padding: 5px;
+  padding-top: 5px;
+}
+
+.ios [searchmap], .md [searchmap] {
+  height: 50px;
+  width: 90%;
+  margin: 0 5%;
+  background: white;
+  padding: 10px;
+  line-height: 30px;
+}
+
+.ios [searchmap] span, .md [searchmap] span {
+  float: left;
+  width: 90%;
+  display: inline-block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ios [searchmap] i, .md [searchmap] i {
+  line-height: 25px;
+  float: left;
+  color: green;
+  width: 7%;
+}
+
+.ios [showbook], .md [showbook] {
+  width: 100%;
+  position: absolute;
+  background: white;
+  bottom: 0;
+  height: 30%;
 }
