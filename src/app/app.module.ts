@@ -9,7 +9,7 @@ import { ListPage } from '../pages/list/list';
 import { Geolocation } from '@ionic-native/geolocation';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-
+import { Keyboard } from '@ionic-native/keyboard';
 import { HttpModule } from '@angular/http'; 
 
 @NgModule({
@@ -33,6 +33,7 @@ import { HttpModule } from '@angular/http';
   ],
   providers: [
     MyApp,
+    Keyboard,
     StatusBar,
     SplashScreen,
     Geolocation,

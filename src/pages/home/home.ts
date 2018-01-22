@@ -3,7 +3,8 @@ import { NavController, ModalController, NavParams, ViewController} from 'ionic-
 import { Geolocation } from '@ionic-native/geolocation';
 import { Http, Response, Headers, RequestOptions, URLSearchParams } from '@angular/http'; 
 import { MyApp } from '../../app/app.component';
-
+import { Keyboard } from '@ionic-native/keyboard';
+// import { Keyboard } from 'ionic-native';
 
 
 declare var google;
@@ -25,6 +26,8 @@ export class HomePage {
   mylng: any;
   directionsDisplay: any;
   showbook: any;
+  duration: any;
+  distance: any;
   usericon: any = "assets/icon/man.png";
  
  
@@ -157,14 +160,19 @@ export class HomePage {
         this.directionsDisplay.setMap(this.map);
         // directionsDisplay.setPanel(this.directionsPanel.nativeElement);
         directionsService.route({
-        		origin: {lat: this.MainApp.pickup.lat, lng: this.MainApp.pickup.lng},
-        		destination: {lat: this.MainApp.dropoff.lat, lng: this.MainApp.dropoff.lng},
+        		// origin: {lat: this.MainApp.pickup.lat, lng: this.MainApp.pickup.lng},
+        		// destination: {lat: this.MainApp.dropoff.lat, lng: this.MainApp.dropoff.lng},
+        		origin: this.MainApp.pickup.address,
+        		destination: this.MainApp.dropoff.address,
             travelMode: google.maps.TravelMode['DRIVING']
         }, (res, status) => {
         	// console.log(res);
         	this.showbook = 'book';
+
             if(status == google.maps.DirectionsStatus.OK){
                 this.directionsDisplay.setDirections(res);
+                this.distance = res.routes[0].legs[0].distance.value;
+                this.duration = res.routes[0].legs[0].duration.value;
             } else {
                 console.warn(status);
             }
@@ -185,7 +193,7 @@ export class HomePage {
   templateUrl: 'search.html'
 })
 export class SearchPage{
-
+@ViewChild('input') myInput ;
   autocompleteItems;
   autocomplete;
   latitude: number = 0;
@@ -203,23 +211,32 @@ service = new google.maps.places.AutocompleteService();
     public http: Http,
     public viewCtrl: ViewController, 
     private zone: NgZone,
-    private inj:Injector
+    private inj:Injector,
+    private keyboard:Keyboard,
  	) {
-this.MainApp = this.inj.get(MyApp);
+
+	this.MainApp = this.inj.get(MyApp);
     this.autocompleteItems = [];
     this.autocomplete = {
       query: ''
     };
-this.type = params.get('type');
-
-
+	this.type = params.get('type');
 
  }
 
 
-  ionViewLoaded() {
+  ionViewDidEnter() {
 
-	}
+	let elem = <HTMLInputElement>document.querySelector('.searchbar-input');
+	  setTimeout(()=>{
+      	if (elem) {
+	    elem.focus();
+	    this.keyboard.show();
+		}
+  	}, 150);
+
+
+ }
  
  dismiss() {
     this.viewCtrl.dismiss();
@@ -245,7 +262,7 @@ this.type = params.get('type');
         if(predictions){
           predictions.forEach(function (prediction) {
             me.autocompleteItems.push(prediction.description);
-          });   
+          });  
         }
       });
     });
@@ -253,12 +270,25 @@ this.type = params.get('type');
 
   //convert Address string to lat and long
   geoCode(address:any) {
-    let geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ 'address': address }, (results, status) => {
+    // let geocoder = new google.maps.Geocoder();
+    // geocoder.geocode({ 'address': address }, (results, status) => {
+    // 	// console.log(result);
+    // 	if(status){
+    // 	console.log(status);    		
+    // }else{
+    // 	console.log('wala');
+    // }
+
       this.location_data.address = address;
-      this.location_data.lat = results[0].geometry.location.lat();
-      this.location_data.lng = results[0].geometry.location.lng();
-   });
+  //     if(status){
+		// this.location_data.lat = results[0].geometry.location.lat();
+		// this.location_data.lng = results[0].geometry.location.lng();    	
+	 //  }else{
+		// this.location_data.lat = 0;
+		// this.location_data.lng = 0;
+	 //  }
+
+   // });
  }
 
 

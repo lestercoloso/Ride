@@ -29,9 +29,15 @@
 
 
 <div #map id="map"></div> 
-<div showbook *ngIf="showbook" padding>
 
-  <button ion-button full >Book</button>
+
+
+<div showbook *ngIf="distance" padding>
+  Distanct: {{distance}}<br>
+  Duration: {{duration}}
+  <ion-toolbar position="bottom">
+    <button ion-button full>Button</button>
+  </ion-toolbar>
 </div>
 
  

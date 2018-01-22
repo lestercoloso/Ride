@@ -44,7 +44,7 @@ webpackEmptyAsyncContext.id = 151;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__ = __webpack_require__(192);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__ = __webpack_require__(194);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__pages_home_home__ = __webpack_require__(195);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__pages_list_list__ = __webpack_require__(198);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__pages_list_list__ = __webpack_require__(199);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -137,6 +137,7 @@ var MyApp = (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__ = __webpack_require__(196);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_http__ = __webpack_require__(197);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__app_app_component__ = __webpack_require__(191);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ionic_native_keyboard__ = __webpack_require__(198);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -146,6 +147,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+
 
 
 
@@ -250,14 +252,18 @@ var HomePage = (function () {
         this.directionsDisplay.setMap(this.map);
         // directionsDisplay.setPanel(this.directionsPanel.nativeElement);
         directionsService.route({
-            origin: { lat: this.MainApp.pickup.lat, lng: this.MainApp.pickup.lng },
-            destination: { lat: this.MainApp.dropoff.lat, lng: this.MainApp.dropoff.lng },
+            // origin: {lat: this.MainApp.pickup.lat, lng: this.MainApp.pickup.lng},
+            // destination: {lat: this.MainApp.dropoff.lat, lng: this.MainApp.dropoff.lng},
+            origin: this.MainApp.pickup.address,
+            destination: this.MainApp.dropoff.address,
             travelMode: google.maps.TravelMode['DRIVING']
         }, function (res, status) {
-            // console.log(res);
+            console.log(res);
             _this.showbook = 'book';
             if (status == google.maps.DirectionsStatus.OK) {
                 _this.directionsDisplay.setDirections(res);
+                _this.distance = res.routes[0].legs[0].distance.value;
+                _this.duration = res.routes[0].legs[0].duration.value;
             }
             else {
                 console.warn(status);
@@ -274,7 +280,7 @@ var HomePage = (function () {
     ], HomePage.prototype, "places", void 0);
     HomePage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'home-page',template:/*ion-inline-start:"C:\Users\lester\Desktop\mobile\Ride\src\pages\home\home.html"*/'\n\n\n\n<ion-content>\n\n\n\n<ion-fab top left green>\n\n    <button ion-fab mini menuToggle><ion-icon name="menu"></ion-icon></button>\n\n</ion-fab>\n\n\n\n  <ion-fab right bottom green>\n\n    <button ion-fab color="light" (click)="myLocation()"><ion-icon name="locate"></ion-icon></button>\n\n  </ion-fab>\n\n \n\n\n\n<div search-container>\n\n\n\n  <div searchmap style="border-bottom: 1px solid #97f997;" (click)="openSearch(\'pickup\')">\n\n    <i class="fa fa-circle" aria-hidden="true"></i>\n\n    <span >{{MainApp.pickup.address}}</span> \n\n  </div>\n\n\n\n  <div searchmap (click)="openSearch(\'dropoff\')">\n\n    <i class="fa fa-map-marker" aria-hidden="true"></i>\n\n    <span >{{MainApp.dropoff.address}}</span> \n\n  </div>\n\n\n\n</div>\n\n\n\n\n\n\n\n\n\n<div #map id="map"></div> \n\n<div showbook *ngIf="showbook" padding>\n\n\n\n  <button ion-button full >Book</button>\n\n</div>\n\n\n\n \n\n</ion-content>\n\n'/*ion-inline-end:"C:\Users\lester\Desktop\mobile\Ride\src\pages\home\home.html"*/
+            selector: 'home-page',template:/*ion-inline-start:"C:\Users\lester\Desktop\mobile\Ride\src\pages\home\home.html"*/'\n\n\n\n<ion-content>\n\n\n\n<ion-fab top left green>\n\n    <button ion-fab mini menuToggle><ion-icon name="menu"></ion-icon></button>\n\n</ion-fab>\n\n\n\n  <ion-fab right bottom green>\n\n    <button ion-fab color="light" (click)="myLocation()"><ion-icon name="locate"></ion-icon></button>\n\n  </ion-fab>\n\n \n\n\n\n<div search-container>\n\n\n\n  <div searchmap style="border-bottom: 1px solid #97f997;" (click)="openSearch(\'pickup\')">\n\n    <i class="fa fa-circle" aria-hidden="true"></i>\n\n    <span >{{MainApp.pickup.address}}</span> \n\n  </div>\n\n\n\n  <div searchmap (click)="openSearch(\'dropoff\')">\n\n    <i class="fa fa-map-marker" aria-hidden="true"></i>\n\n    <span >{{MainApp.dropoff.address}}</span> \n\n  </div>\n\n\n\n</div>\n\n\n\n\n\n\n\n\n\n<div #map id="map"></div> \n\n\n\n\n\n\n\n<div showbook *ngIf="distance" padding>\n\n  Distanct: {{distance}}<br>\n\n  Duration: {{duration}}\n\n  <ion-toolbar position="bottom">\n\n    <button ion-button full>Button</button>\n\n  </ion-toolbar>\n\n</div>\n\n\n\n \n\n</ion-content>\n\n'/*ion-inline-end:"C:\Users\lester\Desktop\mobile\Ride\src\pages\home\home.html"*/
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* NavController */],
             __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__["a" /* Geolocation */],
@@ -287,12 +293,13 @@ var HomePage = (function () {
 
 // -------------------------------------[search module]-----------------------------------------
 var SearchPage = (function () {
-    function SearchPage(params, http, viewCtrl, zone, inj) {
+    function SearchPage(params, http, viewCtrl, zone, inj, keyboard) {
         this.params = params;
         this.http = http;
         this.viewCtrl = viewCtrl;
         this.zone = zone;
         this.inj = inj;
+        this.keyboard = keyboard;
         this.latitude = 0;
         this.longitude = 0;
         this.location_data = [];
@@ -304,7 +311,15 @@ var SearchPage = (function () {
         };
         this.type = params.get('type');
     }
-    SearchPage.prototype.ionViewLoaded = function () {
+    SearchPage.prototype.ionViewDidEnter = function () {
+        var _this = this;
+        var elem = document.querySelector('.searchbar-input');
+        setTimeout(function () {
+            if (elem) {
+                elem.focus();
+                _this.keyboard.show();
+            }
+        }, 150);
     };
     SearchPage.prototype.dismiss = function () {
         this.viewCtrl.dismiss();
@@ -334,26 +349,41 @@ var SearchPage = (function () {
     };
     //convert Address string to lat and long
     SearchPage.prototype.geoCode = function (address) {
-        var _this = this;
-        var geocoder = new google.maps.Geocoder();
-        geocoder.geocode({ 'address': address }, function (results, status) {
-            _this.location_data.address = address;
-            _this.location_data.lat = results[0].geometry.location.lat();
-            _this.location_data.lng = results[0].geometry.location.lng();
-        });
+        // let geocoder = new google.maps.Geocoder();
+        // geocoder.geocode({ 'address': address }, (results, status) => {
+        // 	// console.log(result);
+        // 	if(status){
+        // 	console.log(status);    		
+        // }else{
+        // 	console.log('wala');
+        // }
+        this.location_data.address = address;
+        //     if(status){
+        // this.location_data.lat = results[0].geometry.location.lat();
+        // this.location_data.lng = results[0].geometry.location.lng();    	
+        //  }else{
+        // this.location_data.lat = 0;
+        // this.location_data.lng = 0;
+        //  }
+        // });
     };
     SearchPage.prototype.getSearch = function (test) {
         console.log(test);
     };
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_8" /* ViewChild */])('input'),
+        __metadata("design:type", Object)
+    ], SearchPage.prototype, "myInput", void 0);
     SearchPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'search-page',template:/*ion-inline-start:"C:\Users\lester\Desktop\mobile\Ride\src\pages\home\search.html"*/'<ion-header>\n\n  <ion-toolbar>\n\n    <ion-searchbar  #input [(ngModel)]="autocomplete.query" [showCancelButton]="true" (ionInput)="updateSearch()" (ionCancel)="dismiss()"></ion-searchbar>\n\n  </ion-toolbar>\n\n</ion-header>\n\n\n\n<ion-content>\n\n<!-- <button ion-button (click)="">Focus</button> -->\n\n  <ion-list>\n\n    <ion-item *ngFor="let item of autocompleteItems" tappable   (click)="chooseItem(item)">\n\n      {{ item }}\n\n    </ion-item>\n\n  </ion-list>\n\n</ion-content>'/*ion-inline-end:"C:\Users\lester\Desktop\mobile\Ride\src\pages\home\search.html"*/
+            selector: 'search-page',template:/*ion-inline-start:"C:\Users\lester\Desktop\mobile\Ride\src\pages\home\search.html"*/'<ion-header>\n\n  <ion-toolbar>\n\n    <ion-searchbar class="search-address" [(ngModel)]="autocomplete.query" [showCancelButton]="true" (ionInput)="updateSearch()" (ionCancel)="dismiss()"></ion-searchbar>\n\n  </ion-toolbar>\n\n</ion-header>\n\n\n\n<ion-content>\n\n<!-- <button ion-button (click)="">Focus</button> -->\n\n  <ion-list>\n\n    <ion-item *ngFor="let item of autocompleteItems" tappable   (click)="chooseItem(item)">\n\n      {{ item }}\n\n    </ion-item>\n\n  </ion-list>\n\n\n\n<!-- <div (click)="ionViewLoaded()">test</div> -->\n\n</ion-content>'/*ion-inline-end:"C:\Users\lester\Desktop\mobile\Ride\src\pages\home\search.html"*/
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavParams */],
             __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */],
             __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* ViewController */],
             __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* NgZone */],
-            __WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injector */]])
+            __WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injector */],
+            __WEBPACK_IMPORTED_MODULE_5__ionic_native_keyboard__["a" /* Keyboard */]])
     ], SearchPage);
     return SearchPage;
 }());
@@ -362,7 +392,7 @@ var SearchPage = (function () {
 
 /***/ }),
 
-/***/ 198:
+/***/ 199:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -419,13 +449,13 @@ var ListPage = (function () {
 
 /***/ }),
 
-/***/ 199:
+/***/ 200:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__ = __webpack_require__(200);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_module__ = __webpack_require__(223);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__ = __webpack_require__(201);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_module__ = __webpack_require__(224);
 
 
 Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* platformBrowserDynamic */])().bootstrapModule(__WEBPACK_IMPORTED_MODULE_1__app_module__["a" /* AppModule */]);
@@ -433,7 +463,7 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 
 /***/ }),
 
-/***/ 223:
+/***/ 224:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -443,17 +473,19 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_component__ = __webpack_require__(191);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__pages_home_home__ = __webpack_require__(195);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__pages_list_list__ = __webpack_require__(198);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__pages_list_list__ = __webpack_require__(199);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ionic_native_geolocation__ = __webpack_require__(196);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_status_bar__ = __webpack_require__(192);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_splash_screen__ = __webpack_require__(194);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__angular_http__ = __webpack_require__(197);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__ionic_native_keyboard__ = __webpack_require__(198);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__angular_http__ = __webpack_require__(197);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -477,7 +509,7 @@ var AppModule = (function () {
             ],
             imports: [
                 __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__["a" /* BrowserModule */],
-                __WEBPACK_IMPORTED_MODULE_9__angular_http__["b" /* HttpModule */],
+                __WEBPACK_IMPORTED_MODULE_10__angular_http__["b" /* HttpModule */],
                 __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["c" /* IonicModule */].forRoot(__WEBPACK_IMPORTED_MODULE_3__app_component__["a" /* MyApp */], {}, {
                     links: []
                 }),
@@ -491,6 +523,7 @@ var AppModule = (function () {
             ],
             providers: [
                 __WEBPACK_IMPORTED_MODULE_3__app_component__["a" /* MyApp */],
+                __WEBPACK_IMPORTED_MODULE_9__ionic_native_keyboard__["a" /* Keyboard */],
                 __WEBPACK_IMPORTED_MODULE_7__ionic_native_status_bar__["a" /* StatusBar */],
                 __WEBPACK_IMPORTED_MODULE_8__ionic_native_splash_screen__["a" /* SplashScreen */],
                 __WEBPACK_IMPORTED_MODULE_6__ionic_native_geolocation__["a" /* Geolocation */],
@@ -505,5 +538,5 @@ var AppModule = (function () {
 
 /***/ })
 
-},[199]);
+},[200]);
 //# sourceMappingURL=main.js.map
