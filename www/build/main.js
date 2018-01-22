@@ -112,15 +112,14 @@ var MyApp = (function () {
     };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_8" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* Nav */]),
-        __metadata("design:type", typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* Nav */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* Nav */]) === "function" && _a || Object)
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* Nav */])
     ], MyApp.prototype, "nav", void 0);
     MyApp = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({template:/*ion-inline-start:"C:\Users\lester\Desktop\mobile\Ride\src\app\app.html"*/'<ion-menu [content]="content">\n\n  <ion-header user-container>\n\n    \n\n    <div user-pic-container>\n\n      <div></div>\n\n    </div>\n\n    <div user-name>Test User</div>\n\n\n\n  </ion-header>\n\n\n\n  <ion-content>\n\n    <ion-list>\n\n      <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)" pages>\n\n        <i class="fa {{p.icon}}" aria-hidden="true"></i>\n\n        {{p.title}}\n\n      </button>\n\n    </ion-list>\n\n  </ion-content>\n\n\n\n</ion-menu>\n\n\n\n<!-- Disable swipe-to-go-back because it\'s poor UX to combine STGB with side menus -->\n\n<ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>'/*ion-inline-end:"C:\Users\lester\Desktop\mobile\Ride\src\app\app.html"*/
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({template:/*ion-inline-start:"/Users/lester.coloso/Documents/mobile/Ride/src/app/app.html"*/'<ion-menu [content]="content">\n  <ion-header user-container>\n    \n    <div user-pic-container>\n      <div></div>\n    </div>\n    <div user-name>Test User</div>\n\n  </ion-header>\n\n  <ion-content>\n    <ion-list>\n      <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)" pages>\n        <i class="fa {{p.icon}}" aria-hidden="true"></i>\n        {{p.title}}\n      </button>\n    </ion-list>\n  </ion-content>\n\n</ion-menu>\n\n<!-- Disable swipe-to-go-back because it\'s poor UX to combine STGB with side menus -->\n<ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>'/*ion-inline-end:"/Users/lester.coloso/Documents/mobile/Ride/src/app/app.html"*/
         }),
-        __metadata("design:paramtypes", [typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* Platform */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* Platform */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__["a" /* StatusBar */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__["a" /* StatusBar */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__["a" /* SplashScreen */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__["a" /* SplashScreen */]) === "function" && _d || Object])
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* Platform */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__["a" /* StatusBar */], __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__["a" /* SplashScreen */]])
     ], MyApp);
     return MyApp;
-    var _a, _b, _c, _d;
 }());
 
 //# sourceMappingURL=app.component.js.map
@@ -160,7 +159,6 @@ var HomePage = (function () {
         this.modalCtrl = modalCtrl;
         this.inj = inj;
         this.mylocation = [];
-        this.showbook = false;
         this.usericon = "assets/icon/man.png";
         this.MainApp = this.inj.get(__WEBPACK_IMPORTED_MODULE_4__app_app_component__["a" /* MyApp */]);
     }
@@ -181,7 +179,7 @@ var HomePage = (function () {
                 center: latLng,
                 icon: _this.usericon,
                 zoom: 16,
-                // mapTypeId: 'roadmap',
+                mapTypeId: 'roadmap',
                 disableDefaultUI: true
             };
             _this.getAddress(position.coords.latitude, position.coords.longitude);
@@ -195,7 +193,7 @@ var HomePage = (function () {
         var _this = this;
         this.http.get('http://maps.googleapis.com/maps/api/geocode/json?latlng=' + lt + ',' + lng + '&sensor=true/false', {}).subscribe(function (data) {
             var result = data.json();
-            if (result.results[0]) {
+            if (result.status == "OK") {
                 _this.MainApp.pickup.address = result.results[0].formatted_address;
             }
         }, function (error) {
@@ -223,10 +221,8 @@ var HomePage = (function () {
         var infoWindow = new google.maps.InfoWindow({
             content: content,
         });
-        //  google.maps.event.addListener(marker, 'click', () => {
         infoWindow.close();
         infoWindow.open(this.map, marker);
-        //  });
     };
     HomePage.prototype.openSearch = function (type) {
         var _this = this;
@@ -245,8 +241,13 @@ var HomePage = (function () {
     HomePage.prototype.startNavigating = function () {
         var _this = this;
         var directionsService = new google.maps.DirectionsService;
-        var directionsDisplay = new google.maps.DirectionsRenderer({ polylineOptions: { strokeColor: "black" } });
-        directionsDisplay.setMap(this.map);
+        if (this.directionsDisplay != null) {
+            this.directionsDisplay.setMap(null);
+            this.directionsDisplay = null;
+        }
+        this.directionsDisplay = new google.maps.DirectionsRenderer({ polylineOptions: { strokeColor: "black" } });
+        this.directionsDisplay.setMap(null);
+        this.directionsDisplay.setMap(this.map);
         // directionsDisplay.setPanel(this.directionsPanel.nativeElement);
         directionsService.route({
             origin: { lat: this.MainApp.pickup.lat, lng: this.MainApp.pickup.lng },
@@ -254,9 +255,9 @@ var HomePage = (function () {
             travelMode: google.maps.TravelMode['DRIVING']
         }, function (res, status) {
             // console.log(res);
-            _this.showbook = true;
+            _this.showbook = 'book';
             if (status == google.maps.DirectionsStatus.OK) {
-                directionsDisplay.setDirections(res);
+                _this.directionsDisplay.setDirections(res);
             }
             else {
                 console.warn(status);
@@ -273,7 +274,7 @@ var HomePage = (function () {
     ], HomePage.prototype, "places", void 0);
     HomePage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'home-page',template:/*ion-inline-start:"C:\Users\lester\Desktop\mobile\Ride\src\pages\home\home.html"*/'\n\n\n\n<ion-content>\n\n\n\n<ion-fab top left green>\n\n    <button ion-fab mini menuToggle><ion-icon name="menu"></ion-icon></button>\n\n</ion-fab>\n\n\n\n  <ion-fab right bottom green>\n\n    <button ion-fab color="light" (click)="myLocation()"><ion-icon name="locate"></ion-icon></button>\n\n  </ion-fab>\n\n \n\n\n\n<div search-container>\n\n\n\n  <div searchmap style="border-bottom: 1px solid #97f997;" (click)="openSearch(\'pickup\')">\n\n    <i class="fa fa-map-marker" aria-hidden="true"></i>\n\n    <span >{{MainApp.pickup.address}}</span> \n\n  </div>\n\n\n\n  <div searchmap (click)="openSearch(\'dropoff\')">\n\n    <i class="fa fa-map-marker" aria-hidden="true"></i>\n\n    <span >{{MainApp.dropoff.address}}</span> \n\n  </div>\n\n\n\n</div>\n\n\n\n\n\n\n\n\n\n<div #map id="map"></div> \n\n<div showbook *ngIf="showbook" padding>\n\n\n\n  <button ion-button full >Book</button>\n\n</div>\n\n\n\n \n\n</ion-content>\n\n'/*ion-inline-end:"C:\Users\lester\Desktop\mobile\Ride\src\pages\home\home.html"*/
+            selector: 'home-page',template:/*ion-inline-start:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/home/home.html"*/'\n\n<ion-content>\n\n<ion-fab top left green>\n    <button ion-fab mini menuToggle><ion-icon name="menu"></ion-icon></button>\n</ion-fab>\n\n  <ion-fab right bottom green>\n    <button ion-fab color="light" (click)="myLocation()"><ion-icon name="locate"></ion-icon></button>\n  </ion-fab>\n \n\n<div search-container>\n\n  <div searchmap style="border-bottom: 1px solid #97f997;" (click)="openSearch(\'pickup\')">\n    <i class="fa fa-circle" aria-hidden="true"></i>\n    <span >{{MainApp.pickup.address}}</span> \n  </div>\n\n  <div searchmap (click)="openSearch(\'dropoff\')">\n    <i class="fa fa-map-marker" aria-hidden="true"></i>\n    <span >{{MainApp.dropoff.address}}</span> \n  </div>\n\n</div>\n\n\n\n\n<div #map id="map"></div> \n<div showbook *ngIf="showbook" padding>\n\n  <button ion-button full >Book</button>\n</div>\n\n \n</ion-content>\n'/*ion-inline-end:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/home/home.html"*/
         }),
         __metadata("design:paramtypes", [typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* NavController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* NavController */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__["a" /* Geolocation */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__["a" /* Geolocation */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["d" /* ModalController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["d" /* ModalController */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injector */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injector */]) === "function" && _g || Object])
     ], HomePage);
@@ -281,6 +282,7 @@ var HomePage = (function () {
     var _a, _b, _c, _d, _e, _f, _g;
 }());
 
+// -------------------------------------[search module]-----------------------------------------
 var SearchPage = (function () {
     function SearchPage(params, http, viewCtrl, zone, inj) {
         this.params = params;
@@ -305,6 +307,7 @@ var SearchPage = (function () {
         this.viewCtrl.dismiss();
     };
     SearchPage.prototype.chooseItem = function (item) {
+        console.log(item);
         this.geo = item;
         this.geoCode(this.geo); //convert Address to lat and long
         this.viewCtrl.dismiss({ type: this.type, location: this.location_data });
@@ -331,12 +334,9 @@ var SearchPage = (function () {
         var _this = this;
         var geocoder = new google.maps.Geocoder();
         geocoder.geocode({ 'address': address }, function (results, status) {
-            // this.longitude = 12232;
-            _this.location_data.address = results[0].formatted_address;
+            _this.location_data.address = address;
             _this.location_data.lat = results[0].geometry.location.lat();
             _this.location_data.lng = results[0].geometry.location.lng();
-            // this.MainApp.changeAddress('test','hellos');
-            // this.MainApp.changeAddress(this.type, results[0].formatted_address, results[0].geometry.location.lat(), results[0].geometry.location.lng());
         });
     };
     SearchPage.prototype.getSearch = function (test) {
@@ -344,7 +344,7 @@ var SearchPage = (function () {
     };
     SearchPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'search-page',template:/*ion-inline-start:"C:\Users\lester\Desktop\mobile\Ride\src\pages\home\search.html"*/'<ion-header>\n\n  <ion-toolbar>\n\n    <ion-searchbar  #input [(ngModel)]="autocomplete.query" [showCancelButton]="true" (ionInput)="updateSearch()" (ionCancel)="dismiss()"></ion-searchbar>\n\n  </ion-toolbar>\n\n</ion-header>\n\n\n\n<ion-content>\n\n<!-- <button ion-button (click)="">Focus</button> -->\n\n  <ion-list>\n\n    <ion-item *ngFor="let item of autocompleteItems" tappable   (click)="chooseItem(item)">\n\n      {{ item }}\n\n    </ion-item>\n\n  </ion-list>\n\n</ion-content>'/*ion-inline-end:"C:\Users\lester\Desktop\mobile\Ride\src\pages\home\search.html"*/
+            selector: 'search-page',template:/*ion-inline-start:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/home/search.html"*/'<ion-header>\n  <ion-toolbar>\n    <ion-searchbar  #input [(ngModel)]="autocomplete.query" [showCancelButton]="true" (ionInput)="updateSearch()" (ionCancel)="dismiss()"></ion-searchbar>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content>\n<!-- <button ion-button (click)="">Focus</button> -->\n  <ion-list>\n    <ion-item *ngFor="let item of autocompleteItems" tappable   (click)="chooseItem(item)">\n      {{ item }}\n    </ion-item>\n  </ion-list>\n</ion-content>'/*ion-inline-end:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/home/search.html"*/
         }),
         __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavParams */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavParams */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* ViewController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* ViewController */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* NgZone */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* NgZone */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injector */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injector */]) === "function" && _e || Object])
     ], SearchPage);
@@ -401,7 +401,7 @@ var ListPage = (function () {
     };
     ListPage = ListPage_1 = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-list',template:/*ion-inline-start:"C:\Users\lester\Desktop\mobile\Ride\src\pages\list\list.html"*/'<ion-header>\n\n  <ion-navbar>\n\n    <button ion-button menuToggle>\n\n      <ion-icon name="menu"></ion-icon>\n\n    </button>\n\n    <ion-title>List</ion-title>\n\n  </ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content>\n\n  <ion-list>\n\n    <button ion-item *ngFor="let item of items" (click)="itemTapped($event, item)">\n\n      <ion-icon [name]="item.icon" item-start></ion-icon>\n\n      {{item.title}}\n\n      <div class="item-note" item-end>\n\n        {{item.note}}\n\n      </div>\n\n    </button>\n\n  </ion-list>\n\n  <div *ngIf="selectedItem" padding>\n\n    You navigated here from <b>{{selectedItem.title}}</b>\n\n  </div>\n\n</ion-content>\n\n'/*ion-inline-end:"C:\Users\lester\Desktop\mobile\Ride\src\pages\list\list.html"*/
+            selector: 'page-list',template:/*ion-inline-start:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/list/list.html"*/'<ion-header>\n  <ion-navbar>\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>List</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content>\n  <ion-list>\n    <button ion-item *ngFor="let item of items" (click)="itemTapped($event, item)">\n      <ion-icon [name]="item.icon" item-start></ion-icon>\n      {{item.title}}\n      <div class="item-note" item-end>\n        {{item.note}}\n      </div>\n    </button>\n  </ion-list>\n  <div *ngIf="selectedItem" padding>\n    You navigated here from <b>{{selectedItem.title}}</b>\n  </div>\n</ion-content>\n'/*ion-inline-end:"/Users/lester.coloso/Documents/mobile/Ride/src/pages/list/list.html"*/
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavParams */]])
     ], ListPage);

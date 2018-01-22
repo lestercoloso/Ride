@@ -23,7 +23,8 @@ export class HomePage {
   dropoff: any;
   mylat: any;
   mylng: any;
-  showbook: boolean = false;
+  directionsDisplay: any;
+  showbook: any;
   usericon: any = "assets/icon/man.png";
  
  
@@ -63,7 +64,7 @@ export class HomePage {
         center: latLng,
         icon: this.usericon,
         zoom: 16,
-        // mapTypeId: 'roadmap',
+        mapTypeId: 'roadmap',
         disableDefaultUI: true
       }
 
@@ -81,7 +82,7 @@ export class HomePage {
   getAddress(lt,lng){
     this.http.get('http://maps.googleapis.com/maps/api/geocode/json?latlng='+lt+','+lng+'&sensor=true/false', { }).subscribe(data => {
       let result =  data.json();
-      if(result.results[0]){
+      if(result.status=="OK"){
        this.MainApp.pickup.address = result.results[0].formatted_address;       
       }
     }, error => {
@@ -120,45 +121,50 @@ export class HomePage {
     let infoWindow = new google.maps.InfoWindow({
       content: content,
     }); 
-  //  google.maps.event.addListener(marker, 'click', () => {
       infoWindow.close();
       infoWindow.open(this.map, marker);
-  //  });
   }
  
-  openSearch(type){
+    openSearch(type){
 
-	let searchModal = this.modalCtrl.create(SearchPage, { type:type });
-	  searchModal.onDidDismiss(data => {
-	  	if(data){
-	  		console.log(data);
-			this.MainApp.changeAddress(data); 
-			if(this.MainApp.dropoff && this.MainApp.pickup){
-				this.startNavigating();					
-			}
-	  	}
-	  });
-	searchModal.present();
+  	let searchModal = this.modalCtrl.create(SearchPage, { type:type });
+  	  searchModal.onDidDismiss(data => {
+  	  	if(data){
+  	  		console.log(data);
 
-  }
+  			this.MainApp.changeAddress(data); 
+  			if(this.MainApp.dropoff && this.MainApp.pickup){
+  				this.startNavigating();					
+  			}
+  	  	}
+  	  });
+  	searchModal.present();
+
+    }
 
     startNavigating(){
  
         let directionsService = new google.maps.DirectionsService;
-        let directionsDisplay = new google.maps.DirectionsRenderer({ polylineOptions: { strokeColor: "black" } });
- 
-        directionsDisplay.setMap(this.map);
+
+        if (this.directionsDisplay != null) {
+            this.directionsDisplay.setMap(null);
+            this.directionsDisplay = null;
+        }
+
+        this.directionsDisplay = new google.maps.DirectionsRenderer({ polylineOptions: { strokeColor: "black" } });
+
+        this.directionsDisplay.setMap(null);
+        this.directionsDisplay.setMap(this.map);
         // directionsDisplay.setPanel(this.directionsPanel.nativeElement);
- 
         directionsService.route({
-			origin: {lat: this.MainApp.pickup.lat, lng: this.MainApp.pickup.lng},
-			destination: {lat: this.MainApp.dropoff.lat, lng: this.MainApp.dropoff.lng},
+        		origin: {lat: this.MainApp.pickup.lat, lng: this.MainApp.pickup.lng},
+        		destination: {lat: this.MainApp.dropoff.lat, lng: this.MainApp.dropoff.lng},
             travelMode: google.maps.TravelMode['DRIVING']
         }, (res, status) => {
         	// console.log(res);
-        	this.showbook = true;
+        	this.showbook = 'book';
             if(status == google.maps.DirectionsStatus.OK){
-                directionsDisplay.setDirections(res);
+                this.directionsDisplay.setDirections(res);
             } else {
                 console.warn(status);
             }
@@ -171,7 +177,7 @@ export class HomePage {
 
 
 
-
+// -------------------------------------[search module]-----------------------------------------
 
 
 @Component({
@@ -220,6 +226,7 @@ this.type = params.get('type');
   }
 
   chooseItem(item: any) {
+    console.log(item);
     this.geo = item;
     this.geoCode(this.geo);//convert Address to lat and long
     this.viewCtrl.dismiss({type:this.type, location:this.location_data});
@@ -248,12 +255,9 @@ this.type = params.get('type');
   geoCode(address:any) {
     let geocoder = new google.maps.Geocoder();
     geocoder.geocode({ 'address': address }, (results, status) => {
-      // this.longitude = 12232;
-      this.location_data.address = results[0].formatted_address;
+      this.location_data.address = address;
       this.location_data.lat = results[0].geometry.location.lat();
       this.location_data.lng = results[0].geometry.location.lng();
-      // this.MainApp.changeAddress('test','hellos');
-      // this.MainApp.changeAddress(this.type, results[0].formatted_address, results[0].geometry.location.lat(), results[0].geometry.location.lng());
    });
  }
 
