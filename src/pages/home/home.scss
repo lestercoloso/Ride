@@ -18,46 +18,64 @@
     	display:none;
     }
 
+
+
     [search-container]{
       position: absolute;
       z-index: 100;
-      width: 100%;
-      margin-top: 75px;
+      width: 90%;
+      margin: 75px 5%;
+      background: white;
     }
 
-    [search-container] ion-input{
-        background: #fff;
-        margin:auto;
-        width: 90%;
-        border: 2px solid green;
-        margin-top: 10px;
-    }
-
-    [search-container] ion-input input{
-        padding-top: 5px;
-    }
 
     [searchmap]{
-      height: 50px;
-      width: 90%;
-      margin: 0 5%;
-      background: white;
-      padding: 10px;
+      height: 100px;
+      width: 95%;
+      margin: 0 3%;
       line-height: 30px;
     }
+
+    [searchmap-icon]{
+      float: left;
+      height: 100px;
+      width: 10%;
+      margin: 0 4%;
+    }
+
     [searchmap] span{
       float:left;
-      width: 90%;
+      width: 80%;
+      height: 50px;
       display: inline-block;
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
+      line-height: 50px;
     }
-    [searchmap] i{
-      line-height: 25px;
-      float:left;
+    [searchmap] span[top]{
+      border-bottom: solid 1px green;
+    }
+
+    [searchmap-icon] i{
+      position: relative;
+      width: 100%;
+      float: left;
+      text-align: center;
+    }
+
+    [searchmap-icon] .fa-taxi{
+      top: 16px;
+    }
+    [searchmap-icon] .fa-ellipsis-v{
+      top: 28px;
+    }
+    [searchmap-icon] .fa-map-marker{
+      top: 39px;
+    }
+
+    .green-icon{
       color: green;
-      width: 7%;
     }
 
     [showbook]{
@@ -66,7 +84,31 @@
       background: white;
       bottom: 0;
       height: 30%;
+
     }
+
+    [booking]{
+      text-align: center;
+      float: left;
+      width: 100px;
+      margin: 10px;
+    }
+
+    [booking] label{
+      float: left;
+      width: 100%;
+      font-weight: bold;
+    }
+    [booking] em, [booking-container]{
+      float: left;
+      width: 100%;
+    }
+    [booking] span{
+      float: left;
+      width: 100%;
+    }
+
+
  
 }
 

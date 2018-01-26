@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, NgZone, Inject, Injector, Injectable } from '@angular/core';
-import { NavController, ModalController, NavParams, ViewController} from 'ionic-angular';
+import { NavController, ModalController, NavParams, ViewController, AlertController, LoadingController } from 'ionic-angular';
 import { Geolocation } from '@ionic-native/geolocation';
 import { Http, Response, Headers, RequestOptions, URLSearchParams } from '@angular/http'; 
 import { MyApp } from '../../app/app.component';
@@ -28,6 +28,7 @@ export class HomePage {
   showbook: any;
   duration: any;
   distance: any;
+  car_options: Array<{icon:string, title: string, price: number, details: any}>;
   usericon: any = "assets/icon/man.png";
  
  
@@ -36,17 +37,65 @@ export class HomePage {
     public geolocation: Geolocation,
     public http: Http,
     public modalCtrl: ModalController,
-    private inj:Injector
+    private inj:Injector,
+    private ngZone:NgZone,
+    private alertCtrl: AlertController,
+    public loadingCtrl: LoadingController
     ) {
+
+    this.car_options = [
+      { icon:'assets/imgs/sedan.png', title: 'Deluxe', price: 10, details: '1-4 seater' },
+      { icon:'assets/imgs/suv.png', title: 'Suite', price: 50, details: '1-5 seater' },
+      { icon:'assets/imgs/sedan.png', title: 'Executive', price: 60, details: '1-6 seater' },
+    ];
+
 
     this.MainApp = this.inj.get(MyApp);
   }
  
+  computePrice(plus){
+
+    let price = 0;
+    let distance = this.distance/1000;
+    let time = this.duration/60;
+
+    price = parseInt(((distance*time)*0.95)+plus);
+    return price;
+
+  }
+
   ionViewDidLoad(){
     this.loadMap();
   }
 
 
+  cancelUnbook(){
+    let alert = this.alertCtrl.create({
+        title: '',
+        message: 'Are you sure you want to cancel this?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            handler: () => {
+              console.log('Cancel clicked');
+            }
+          },
+          {
+            text: 'Ok',
+            handler: () => {
+              this.MainApp.dropoff.address = "";
+              this.showbook = false;
+              if (this.directionsDisplay != null) {
+               this.directionsDisplay.setMap(null);
+                this.directionsDisplay = null;
+              }
+            }
+          }
+        ]
+      });
+      alert.present();
+  }
  
   loadMap(){
  
@@ -67,6 +116,7 @@ export class HomePage {
         center: latLng,
         icon: this.usericon,
         zoom: 16,
+        streetViewControl: false,
         mapTypeId: 'roadmap',
         disableDefaultUI: true
       }
@@ -87,6 +137,8 @@ export class HomePage {
       let result =  data.json();
       if(result.status=="OK"){
        this.MainApp.pickup.address = result.results[0].formatted_address;       
+      }else{
+        alert('Unable to get the address');
       }
     }, error => {
         alert('Unable to get the address');
@@ -96,7 +148,7 @@ export class HomePage {
 
 
   myLocation(){
-
+      
       let center = new google.maps.LatLng(this.MainApp.centerlat, this.MainApp.centerlng);
         this.map.panTo(center);
 
@@ -119,6 +171,20 @@ export class HomePage {
 
 }
 
+
+book() {
+  let loading = this.loadingCtrl.create({
+    content: 'Please wait...'
+  });
+
+  loading.present();
+
+  setTimeout(() => {
+    loading.dismiss();
+  }, 5000);
+}
+
+
   addInfoWindow(marker, content){
    
     let infoWindow = new google.maps.InfoWindow({
@@ -132,14 +198,16 @@ export class HomePage {
 
   	let searchModal = this.modalCtrl.create(SearchPage, { type:type });
   	  searchModal.onDidDismiss(data => {
-  	  	if(data){
-  	  		console.log(data);
+    
+        if(data){
+          this.MainApp.changeAddress(data); 
+          if(this.MainApp.dropoff && this.MainApp.pickup){
+            this.startNavigating();         
+          }
+        }
 
-  			this.MainApp.changeAddress(data); 
-  			if(this.MainApp.dropoff && this.MainApp.pickup){
-  				this.startNavigating();					
-  			}
-  	  	}
+
+
   	  });
   	searchModal.present();
 
@@ -154,6 +222,19 @@ export class HomePage {
             this.directionsDisplay = null;
         }
 
+                // var image = new google.maps.MarkerImage('https://lh3.googleusercontent.com/9VaPNnB-Z3vMgVuKCrEbTTxqg_70IzmzrH80wjwAcTLKlnRBmYedwel8mU3KWy0gpa9z=w300',
+                //             new google.maps.Size(58, 58),
+                //             new google.maps.Point(0, 0),
+                //             new google.maps.Point(0, 14));
+
+                // var markerOption = {
+                //     clickable: false,
+                //     flat: true,
+                //     icon: image,
+                //     visible: true,
+                //     map: map
+                // };
+
         this.directionsDisplay = new google.maps.DirectionsRenderer({ polylineOptions: { strokeColor: "black" } });
 
         this.directionsDisplay.setMap(null);
@@ -166,16 +247,21 @@ export class HomePage {
         		destination: this.MainApp.dropoff.address,
             travelMode: google.maps.TravelMode['DRIVING']
         }, (res, status) => {
-        	// console.log(res);
-        	this.showbook = 'book';
+        	console.log(res);
 
+            this.ngZone.run(() => {
+          
             if(status == google.maps.DirectionsStatus.OK){
+                this.showbook = 'book';
                 this.directionsDisplay.setDirections(res);
                 this.distance = res.routes[0].legs[0].distance.value;
                 this.duration = res.routes[0].legs[0].duration.value;
             } else {
                 console.warn(status);
             }
+
+            });  
+
         });
  
     }

@@ -3,41 +3,58 @@
 <ion-content>
 
 <ion-fab top left green>
-    <button ion-fab mini menuToggle><ion-icon name="menu"></ion-icon></button>
+    <button ion-fab mini menuToggle *ngIf="!showbook"><ion-icon name="menu"></ion-icon></button>
+    <button ion-fab mini *ngIf="showbook" (click)="cancelUnbook()"><ion-icon name="md-arrow-back"></ion-icon></button>
 </ion-fab>
 
-  <ion-fab right bottom green>
-    <button ion-fab color="light" (click)="myLocation()"><ion-icon name="locate"></ion-icon></button>
+  <ion-fab right bottom green *ngIf="!showbook">
+    <button ion-fab mini color="light" (click)="myLocation()"><ion-icon name="locate"></ion-icon></button>
+  </ion-fab>
+
+  <ion-fab right top green *ngIf="showbook">
+    <button ion-fab mini color="light" (click)="myLocation()"><ion-icon name="locate"></ion-icon></button>
   </ion-fab>
  
-
+<!-- style="border-bottom: 1px solid #97f997;" -->
 <div search-container>
 
-  <div searchmap style="border-bottom: 1px solid #97f997;" (click)="openSearch('pickup')">
-    <i class="fa fa-circle" aria-hidden="true"></i>
-    <span >{{MainApp.pickup.address}}</span> 
+  
+  <div searchmap-icon>
+      <i class="fa fa-taxi" aria-hidden="true" [ngClass]="(MainApp.pickup.address) ? 'green-icon' : ''"></i>
+      <i class="fa fa-ellipsis-v" aria-hidden="true" [ngClass]="(MainApp.pickup.address && MainApp.dropoff.address) ? 'green-icon' : ''"></i>
+      <i class="fa fa-map-marker" aria-hidden="true" [ngClass]="(MainApp.dropoff.address) ? 'green-icon' : ''"></i>
   </div>
 
-  <div searchmap (click)="openSearch('dropoff')">
-    <i class="fa fa-map-marker" aria-hidden="true"></i>
-    <span >{{MainApp.dropoff.address}}</span> 
+  <div searchmap>
+    <span (click)="openSearch('pickup')" top>{{MainApp.pickup.address}}</span> 
+    <span (click)="openSearch('dropoff')" >{{MainApp.dropoff.address}}</span> 
   </div>
+
+
 
 </div>
 
 
 
 
-<div #map id="map"></div> 
+<div #map id="map" [ngClass]="showbook"></div> 
 
 
 
-<div showbook *ngIf="distance" padding>
-  Distanct: {{distance}}<br>
-  Duration: {{duration}}
-  <ion-toolbar position="bottom">
-    <button ion-button full>Button</button>
-  </ion-toolbar>
+<div showbook *ngIf="showbook" padding>
+
+<div booking-container>
+<div *ngFor="let c of car_options" booking>
+<label>{{c.title}}</label>
+<img src="{{c.icon}}" />
+<em>{{c.details}}</em>
+<span>PHP {{computePrice(c.price)}}</span>
+</div>
+</div>
+
+
+    <button ion-button full padding (click)="book()">Next</button>
+
 </div>
 
  
